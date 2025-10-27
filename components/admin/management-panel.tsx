@@ -36,6 +36,7 @@ interface Service {
     name: string;
     description: string;
     baseCost: number;
+    rrp: number;
     unit: 'per_person' | 'event' | 'per_item';
 }
 
@@ -275,11 +276,23 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
                 {serviceCategories.map(category => (
                     <div key={category.category}>
                         <h4 className="font-semibold mb-2">{category.category}</h4>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-2">
                             {category.services.map(service => (
-                                <Button key={service.id} variant={editedItem.services?.some(s => s.id === service.id) ? 'default' : 'outline'} onClick={() => handleServiceToggle(service)}>
-                                    {service.name}
-                                </Button>
+                                <div key={service.id} className="flex items-center justify-between p-2 border rounded-md">
+                                    <div className="flex items-center">
+                                        <Checkbox
+                                            id={`service-${service.id}`}
+                                            checked={editedItem.services?.some(s => s.id === service.id)}
+                                            onCheckedChange={() => handleServiceToggle(service)}
+                                            className="mr-4"
+                                        />
+                                        <label htmlFor={`service-${service.id}`} className="font-medium">{service.name}</label>
+                                    </div>
+                                    <div className="text-muted-foreground">
+                                        £{service.rrp.toFixed(2)}
+                                        {service.unit === 'per_person' && ' / person'}
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     </div>
