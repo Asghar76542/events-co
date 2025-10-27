@@ -1,8 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
+import { randomUUID } from 'crypto';
 
 const submissionsPath = path.join(process.cwd(), 'data', 'submissions', 'submissions.json');
+
+// Function to validate email format
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+// Function to sanitize input
+const sanitizeInput = (input: string): string => {
+  return input.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,23 +26,44 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Validate email format
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
+    }
+
+    // Sanitize inputs
+    const sanitizedName = sanitizeInput(name);
+    const sanitizedEmail = sanitizeInput(email);
+    const sanitizedEventType = sanitizeInput(eventType);
+    const sanitizedMessage = sanitizeInput(message);
+
+    // Ensure directory exists
+    const dir = path.dirname(submissionsPath);
+    await fs.mkdir(dir, { recursive: true });
+
     // Read existing submissions
     let submissions = [];
-    if (fs.existsSync(submissionsPath)) {
-      const data = fs.readFileSync(submissionsPath, 'utf8');
+    try {
+      const data = await fs.readFile(submissionsPath, 'utf8');
       submissions = JSON.parse(data);
+    } catch (err) {
+      // If file doesn't exist or is corrupted, start with empty array
+      submissions = [];
     }
 
     // Add new submission with timestamp
     const newSubmission = {
-      ...body,
-      id: Date.now().toString(),
+      name: sanitizedName,
+      email: sanitizedEmail,
+      eventType: sanitizedEventType,
+      message: sanitizedMessage,
+      id: randomUUID(),
       timestamp: new Date().toISOString(),
     };
     submissions.push(newSubmission);
 
     // Write back to file
-    fs.writeFileSync(submissionsPath, JSON.stringify(submissions, null, 2));
+    await fs.writeFile(submissionsPath, JSON.stringify(submissions, null, 2));
 
     return NextResponse.json({ message: 'Form submitted successfully' }, { status: 200 });
   } catch (error) {

@@ -1,0 +1,186 @@
+[
+  {
+    "id": "venue-coordination",
+    "name": "Venue Coordination",
+    "category": "planning",
+    "description": "Booking and setup coordination",
+    "baseCost": 2000,
+    "unit": "event"
+  },
+  {
+    "id": "full-planning",
+    "name": "Full Event Planning & Coordination",
+    "category": "planning",
+    "description": "Complete event planning from start to finish",
+    "baseCost": 5000,
+    "unit": "event"
+  },
+  {
+    "id": "partial-planning",
+    "name": "Partial Planning",
+    "category": "planning",
+    "description": "Partial event planning assistance",
+    "baseCost": 3000,
+    "unit": "event"
+  },
+  {
+    "id": "day-coordination",
+    "name": "Day-of Coordination",
+    "category": "planning",
+    "description": "Coordination on the event day",
+    "baseCost": 1500,
+    "unit": "event"
+  },
+  {
+    "id": "venue-sourcing",
+    "name": "Venue Sourcing",
+    "category": "planning",
+    "description": "Finding and booking suitable venues",
+    "baseCost": 1000,
+    "unit": "event"
+  },
+  {
+    "id": "catering-management",
+    "name": "Catering Management",
+    "category": "catering",
+    "description": "Managing catering services and menus",
+    "baseCost": 500,
+    "unit": "event"
+  },
+  {
+    "id": "modern-british-menu",
+    "name": "Modern British Menu (3-course for 100 guests)",
+    "category": "catering",
+    "description": "Seasonal British produce with contemporary twist",
+    "baseCost": 3500,
+    "unit": "per 100 guests"
+  },
+  {
+    "id": "italian-menu",
+    "name": "Italian Menu (3-course for 100 guests)",
+    "category": "catering",
+    "description": "Classic Italian flavors",
+    "baseCost": 3200,
+    "unit": "per 100 guests"
+  },
+  {
+    "id": "indian-menu",
+    "name": "North Indian Menu (3-course for 100 guests)",
+    "category": "catering",
+    "description": "Rich aromatic Indian dishes",
+    "baseCost": 3400,
+    "unit": "per 100 guests"
+  },
+  {
+    "id": "caribbean-menu",
+    "name": "Caribbean Menu (3-course for 100 guests)",
+    "category": "catering",
+    "description": "Vibrant spicy Caribbean food",
+    "baseCost": 3300,
+    "unit": "per 100 guests"
+  },
+  {
+    "id": "middle-eastern-menu",
+    "name": "Middle Eastern Menu (3-course for 100 guests)",
+    "category": "catering",
+    "description": "Aromatic sociable Middle Eastern cuisine",
+    "baseCost": 3100,
+    "unit": "per 100 guests"
+  },
+  {
+    "id": "vegan-menu",
+    "name": "Vegan Menu (3-course for 100 guests)",
+    "category": "catering",
+    "description": "Plant-based dishes",
+    "baseCost": 3000,
+    "unit": "per 100 guests"
+  },
+  {
+    "id": "decor-floral",
+    "name": "Decor & Floral Design",
+    "category": "decor",
+    "description": "Tables, flowers, and event styling",
+    "baseCost": 3800,
+    "unit": "event"
+  },
+  {
+    "id": "av-lighting",
+    "name": "AV & Lighting",
+    "category": "technical",
+    "description": "Sound, lighting, and AV equipment",
+    "baseCost": 2100,
+    "unit": "event"
+  },
+  {
+    "id": "event-wifi",
+    "name": "Event WiFi & Internet",
+    "category": "technical",
+    "description": "High-speed internet for events",
+    "baseCost": 300,
+    "unit": "event"
+  },
+  {
+    "id": "photography",
+    "name": "Photography",
+    "category": "media",
+    "description": "8-hour photography coverage",
+    "baseCost": 1800,
+    "unit": "event"
+  },
+  {
+    "id": "videography",
+    "name": "Videography",
+    "category": "media",
+    "description": "8-hour videography coverage",
+    "baseCost": 2500,
+    "unit": "event"
+  },
+  {
+    "id": "entertainment-dj",
+    "name": "DJ Entertainment",
+    "category": "entertainment",
+    "description": "Professional DJ services",
+    "baseCost": 800,
+    "unit": "event"
+  },
+  {
+    "id": "entertainment-band",
+    "name": "Live Band",
+    "category": "entertainment",
+    "description": "Live band performance",
+    "baseCost": 2000,
+    "unit": "event"
+  },
+  {
+    "id": "transport-luxury",
+    "name": "Luxury Transport",
+    "category": "logistics",
+    "description": "Luxury cars or transport",
+    "baseCost": 700,
+    "unit": "vehicle"
+  },
+  {
+    "id": "invitation-services",
+    "name": "Invitation Services",
+    "category": "stationery",
+    "description": "Custom invitations and stationery",
+    "baseCost": 500,
+    "unit": "per 100 invites"
+  },
+  {
+    "id": "guest-gifts",
+    "name": "Guest Gifts / Favors",
+    "category": "gifts",
+    "description": "Customized guest gifts",
+    "baseCost": 300,
+    "unit": "per 100 guests"
+  },
+  {
+    "id": "event-printing",
+    "name": "Event Printing",
+    "category": "stationery",
+    "description": "Programs, menus, and signage",
+    "baseCost": 400,
+    "unit": "event"
+  }
+]

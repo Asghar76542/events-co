@@ -1,0 +1,186 @@
+[
+  {
+    "id": "brewery-1",
+    "venue": "The Brewery Quarter",
+    "city": "Burton",
+    "category": "weddings",
+    "image": "/luxury-wedding-ceremony-at-historic-industrial-bre.jpg",
+    "title": "Historic Brewery Wedding",
+    "description": "Elegant ceremony at The Brewery Quarter",
+    "pricing": {
+      "packageType": "Complete",
+      "baseCost": 8500,
+      "markup": 0.32,
+      "totalPrice": 11220,
+      "depositAmount": 3366,
+      "midPayment": 4488,
+      "finalPayment": 3366
+    },
+    "services": [
+      {
+        "id": "venue-coordination",
+        "name": "Venue Coordination",
+        "type": "planning",
+        "description": "Booking and setup coordination",
+        "supplierCost": 2000,
+        "quantity": 1,
+        "totalCost": 2000
+      },
+      {
+        "id": "modern-british-menu",
+        "name": "Modern British Menu (3-course for 100 guests)",
+        "type": "catering",
+        "description": "Seasonal British produce with contemporary twist",
+        "supplierCost": 3500,
+        "quantity": 1,
+        "totalCost": 3500
+      },
+      {
+        "id": "decor-floral",
+        "name": "Decor & Floral Design",
+        "type": "decor",
+        "description": "Tables, flowers, and event styling",
+        "supplierCost": 3800,
+        "quantity": 1,
+        "totalCost": 3800
+      }
+    ],
+    "onboardingStatus": "planning",
+    "clientInfo": {
+      "name": "Sarah Johnson",
+      "email": "sarah.johnson@example.com",
+      "phone": "+44 123 456 7890",
+      "contactMethod": "Email"
+    },
+    "timeline": {
+      "eventDate": "2024-06-15",
+      "depositDue": "2024-03-15",
+      "midPaymentDue": "2024-05-01",
+      "finalPaymentDue": "2024-06-01"
+    },
+    "phases": [
+      {
+        "name": "Booking Secured",
+        "status": "completed",
+        "checklist": ["Contract signed", "Deposit received"]
+      },
+      {
+        "name": "Planning & Supplier Management",
+        "status": "in_progress",
+        "checklist": ["Venue confirmed", "Supplier quotes approved"]
+      },
+      {
+        "name": "Finalization",
+        "status": "pending",
+        "checklist": ["Menu approved", "Decor finalized"]
+      },
+      {
+        "name": "Final Push",
+        "status": "pending",
+        "checklist": ["Final payment received", "Run sheet created"]
+      },
+      {
+        "name": "Event Execution",
+        "status": "pending",
+        "checklist": ["Event day management", "Quality checks"]
+      },
+      {
+        "name": "Post-Event",
+        "status": "pending",
+        "checklist": ["Thank you sent", "Feedback requested"]
+      }
+    ]
+  },
+  {
+    "id": "brewery-2",
+    "venue": "The Brewery Quarter",
+    "city": "Burton",
+    "category": "corporate",
+    "image": "/corporate-gala-event-at-brewery-venue-with-industr.jpg",
+    "title": "Corporate Gala",
+    "description": "Professional event at The Brewery Quarter",
+    "pricing": {
+      "packageType": "Luxury",
+      "baseCost": 12000,
+      "markup": 0.35,
+      "totalPrice": 16200,
+      "depositAmount": 4860,
+      "midPayment": 6480,
+      "finalPayment": 4860
+    },
+    "services": [
+      {
+        "id": "full-planning",
+        "name": "Full Event Planning & Coordination",
+        "type": "planning",
+        "description": "Complete event planning from start to finish",
+        "supplierCost": 5000,
+        "quantity": 1,
+        "totalCost": 5000
+      },
+      {
+        "id": "modern-british-menu",
+        "name": "Modern British Menu (3-course for 100 guests)",
+        "type": "catering",
+        "description": "Seasonal British produce with contemporary twist",
+        "supplierCost": 3500,
+        "quantity": 1,
+        "totalCost": 3500
+      },
+      {
+        "id": "av-lighting",
+        "name": "AV & Lighting",
+        "type": "technical",
+        "description": "Sound, lighting, and AV equipment",
+        "supplierCost": 2100,
+        "quantity": 1,
+        "totalCost": 2100
+      }
+    ],
+    "onboardingStatus": "finalized",
+    "clientInfo": {
+      "name": "TechCorp Ltd",
+      "email": "events@techcorp.com",
+      "phone": "+44 987 654 3210",
+      "contactMethod": "Email"
+    },
+    "timeline": {
+      "eventDate": "2024-07-20",
+      "depositDue": "2024-04-20",
+      "midPaymentDue": "2024-06-05",
+      "finalPaymentDue": "2024-07-06"
+    },
+    "phases": [
+      {
+        "name": "Booking Secured",
+        "status": "completed",
+        "checklist": ["Contract signed", "Deposit received"]
+      },
+      {
+        "name": "Planning & Supplier Management",
+        "status": "completed",
+        "checklist": ["Venue confirmed", "Supplier quotes approved"]
+      },
+      {
+        "name": "Finalization",
+        "status": "in_progress",
+        "checklist": ["Menu approved", "Decor finalized"]
+      },
+      {
+        "name": "Final Push",
+        "status": "pending",
+        "checklist": ["Final payment received", "Run sheet created"]
+      },
+      {
+        "name": "Event Execution",
+        "status": "pending",
+        "checklist": ["Event day management", "Quality checks"]
+      },
+      {
+        "name": "Post-Event",
+        "status": "pending",
+        "checklist": ["Thank you sent", "Feedback requested"]
+      }
+    ]
+  }
+]
