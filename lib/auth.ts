@@ -10,7 +10,7 @@ export interface AdminUser {
 }
 
 const ADMIN_USERS_PATH = path.join(process.cwd(), 'data', 'admin-users.json');
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secure-jwt-secret-key-change-in-production';
 
 export function getAdminUsers(): AdminUser[] {
   try {
