@@ -1,22 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, deleteSession, logAction } from '@/lib/auth';
+import { verifyJWT, getAdminUsers, logAction } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
-  const sessionId = request.cookies.get('sessionId')?.value;
+  const token = request.cookies.get('authToken')?.value;
 
-  if (!sessionId) {
+  if (!token) {
     return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
   }
 
-  const session = getSession(sessionId);
-  if (session) {
-    logAction('logout', session.userId, 'User logged out');
+  const decoded = verifyJWT(token);
+  if (decoded) {
+    logAction('logout', decoded.userId, 'User logged out');
   }
 
-  deleteSession(sessionId);
-
+  // Clear the JWT cookie by setting it to empty with maxAge 0
   const response = NextResponse.json({ message: 'Logout successful' });
-  response.cookies.set('sessionId', '', {
+  response.cookies.set('authToken', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',

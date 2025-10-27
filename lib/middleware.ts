@@ -1,17 +1,17 @@
 import { NextRequest } from 'next/server';
-import { getSession } from './auth';
+import { verifyJWT } from './auth';
 
 export function requireAuth(request: NextRequest): { userId: number } | { error: string; status: number } {
-  const sessionId = request.cookies.get('sessionId')?.value;
+  const token = request.cookies.get('authToken')?.value;
 
-  if (!sessionId) {
+  if (!token) {
     return { error: 'Unauthorized', status: 401 };
   }
 
-  const session = getSession(sessionId);
-  if (!session) {
+  const decoded = verifyJWT(token);
+  if (!decoded) {
     return { error: 'Unauthorized', status: 401 };
   }
 
-  return { userId: session.userId };
+  return { userId: decoded.userId };
 }

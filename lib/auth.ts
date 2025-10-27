@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import jwt from 'jsonwebtoken';
 
 export interface AdminUser {
   id: number;
@@ -8,63 +9,8 @@ export interface AdminUser {
   role: string;
 }
 
-export interface Session {
-  id: string;
-  userId: number;
-  expires: number;
-}
-
-const SESSIONS_PATH = path.join(process.cwd(), 'data', 'sessions.json');
 const ADMIN_USERS_PATH = path.join(process.cwd(), 'data', 'admin-users.json');
-
-// In-memory cache for sessions loaded from file
-let sessionsCache: Map<string, Session> = new Map();
-
-// Load sessions from file
-function loadSessions(): void {
-  try {
-    if (fs.existsSync(SESSIONS_PATH)) {
-      const data = fs.readFileSync(SESSIONS_PATH, 'utf-8');
-      const sessionsArray: Session[] = JSON.parse(data);
-
-      // Convert array back to Map for faster lookups
-      sessionsCache = new Map();
-      sessionsArray.forEach(session => {
-        sessionsCache.set(session.id, session);
-      });
-
-      console.log(`Loaded ${sessionsArray.length} sessions from file`);
-    } else {
-      sessionsCache = new Map();
-      console.log('No sessions file found, starting with empty sessions');
-    }
-  } catch (error) {
-    console.error('Error loading sessions from file:', error);
-    sessionsCache = new Map(); // Start with empty sessions on error
-  }
-}
-
-// Save sessions to file
-function saveSessions(): void {
-  try {
-    const sessionsArray = Array.from(sessionsCache.values());
-
-    // Ensure data directory exists
-    const dataDir = path.dirname(SESSIONS_PATH);
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
-
-    fs.writeFileSync(SESSIONS_PATH, JSON.stringify(sessionsArray, null, 2));
-    console.log(`Saved ${sessionsArray.length} sessions to file`);
-  } catch (error) {
-    console.error('Error saving sessions to file:', error);
-    throw error;
-  }
-}
-
-// Load sessions on module initialization
-loadSessions();
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 export function getAdminUsers(): AdminUser[] {
   try {
@@ -113,59 +59,26 @@ export async function verifyPassword(plainPassword: string, hashedPassword: stri
   }
 }
 
-export function createSession(userId: number): string {
-  const sessionId = Math.random().toString(36).substring(2, 15);
-  const expires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+export function createJWT(userId: number): string {
+  const payload = {
+    userId,
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // 24 hours
+  };
 
-  const session: Session = { id: sessionId, userId, expires };
-  sessionsCache.set(sessionId, session);
-
-  try {
-    saveSessions();
-    console.log(`Session created for user ${userId}: ${sessionId}`);
-  } catch (error) {
-    // Remove from cache if save failed
-    sessionsCache.delete(sessionId);
-    console.error(`Failed to save session ${sessionId}:`, error);
-    throw error;
-  }
-
-  return sessionId;
+  const token = jwt.sign(payload, JWT_SECRET);
+  console.log(`JWT created for user ${userId}`);
+  return token;
 }
 
-export function getSession(sessionId: string): Session | null {
-  const session = sessionsCache.get(sessionId);
-  console.log(`Session lookup for ${sessionId}:`, !!session);
-
-  if (!session) {
-    console.log(`Session ${sessionId} not found in cache`);
-    return null;
-  }
-
-  if (session.expires < Date.now()) {
-    console.log(`Session ${sessionId} expired, deleting`);
-    sessionsCache.delete(sessionId);
-    try {
-      saveSessions();
-    } catch (error) {
-      console.error(`Failed to save sessions after deleting expired session ${sessionId}:`, error);
-    }
-    return null;
-  }
-
-  console.log(`Session ${sessionId} is valid for user ${session.userId}`);
-  return session;
-}
-
-export function deleteSession(sessionId: string): void {
-  console.log(`Session deleted: ${sessionId}`);
-  sessionsCache.delete(sessionId);
-
+export function verifyJWT(token: string): { userId: number; iat: number; exp: number } | null {
   try {
-    saveSessions();
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; iat: number; exp: number };
+    console.log(`JWT verified for user ${decoded.userId}`);
+    return decoded;
   } catch (error) {
-    console.error(`Failed to save sessions after deleting session ${sessionId}:`, error);
-    throw error;
+    console.error('JWT verification failed:', error);
+    return null;
   }
 }
 
@@ -206,39 +119,12 @@ export function logAction(action: string, userId: number, details?: string): voi
   }
 }
 
-// Clean up expired sessions
-export function cleanupExpiredSessions(): number {
-  const now = Date.now();
-  let removedCount = 0;
+// Note: JWT tokens are stateless, so no cleanup is needed for expired tokens
 
-  for (const [sessionId, session] of sessionsCache.entries()) {
-    if (session.expires < now) {
-      sessionsCache.delete(sessionId);
-      removedCount++;
-    }
-  }
-
-  if (removedCount > 0) {
-    try {
-      saveSessions();
-      console.log(`Cleaned up ${removedCount} expired sessions`);
-    } catch (error) {
-      console.error('Failed to save sessions after cleanup:', error);
-    }
-  }
-
-  return removedCount;
-}
-
-// Get all active sessions (for debugging/admin purposes)
-export function getAllSessions(): Session[] {
-  return Array.from(sessionsCache.values()).filter(session => session.expires > Date.now());
-}
-
-// Test function to manually create a session for debugging
-export function createTestSession(): string {
-  console.log('Creating test session for debugging');
-  return createSession(1); // Create session for admin user (id: 1)
+// Test function to manually create a JWT for debugging
+export function createTestJWT(): string {
+  console.log('Creating test JWT for debugging');
+  return createJWT(1); // Create JWT for admin user (id: 1)
 }
 
 // Test authentication functions
@@ -249,23 +135,22 @@ export function testAuthFunctions() {
   const isValidPassword = verifyPassword('admin123', '$2b$10$FI4ZMzGFqt2WAyPrYu36ROL7fdFhAlfP5GuNxmvSZVqr5V/aFNAfC');
   console.log('Password verification test:', isValidPassword);
 
-  // Test session creation
-  const sessionId = createSession(1);
-  console.log('Session creation test:', !!sessionId);
+  // Test JWT creation
+  const token = createJWT(1);
+  console.log('JWT creation test:', !!token);
 
-  // Test session retrieval
-  const session = getSession(sessionId);
-  console.log('Session retrieval test:', !!session);
+  // Test JWT verification
+  const decoded = verifyJWT(token);
+  console.log('JWT verification test:', !!decoded);
 
-  // Test session deletion
-  deleteSession(sessionId);
-  const deletedSession = getSession(sessionId);
-  console.log('Session deletion test:', !deletedSession);
+  // Test invalid JWT
+  const invalidDecoded = verifyJWT('invalid-token');
+  console.log('Invalid JWT test:', !invalidDecoded);
 
   return {
     passwordVerification: isValidPassword,
-    sessionCreation: !!sessionId,
-    sessionRetrieval: !!session,
-    sessionDeletion: !deletedSession
+    jwtCreation: !!token,
+    jwtVerification: !!decoded,
+    invalidJwtRejection: !invalidDecoded
   };
 }

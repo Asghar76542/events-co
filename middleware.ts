@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { verifyJWT } from '@/lib/auth'
 
 export default function middleware(request: NextRequest) {
   // Check if the request is for admin routes
@@ -9,11 +10,18 @@ export default function middleware(request: NextRequest) {
       return NextResponse.next()
     }
 
-    // Check for authentication
-    const sessionId = request.cookies.get('sessionId')?.value
+    // Check for JWT token authentication
+    const token = request.cookies.get('authToken')?.value
 
-    if (!sessionId) {
+    if (!token) {
       // Redirect to login page
+      return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+
+    // Verify JWT token
+    const decoded = verifyJWT(token)
+    if (!decoded) {
+      // Redirect to login page if token is invalid/expired
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
 
@@ -22,14 +30,13 @@ export default function middleware(request: NextRequest) {
       return NextResponse.next()
     }
 
-    // For admin pages, check session validity
-    // In a real app, you'd verify the session is still valid here
-    // For now, we'll let the API handle this
+    // Token is valid, allow access to admin pages
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*']
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  runtime: 'nodejs'
 }

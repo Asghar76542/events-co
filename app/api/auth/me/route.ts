@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, getAdminUsers, createTestSession } from '@/lib/auth';
+import { verifyJWT, getAdminUsers, createTestJWT } from '@/lib/auth';
 
-// Test endpoint to create a session for debugging
+// Test endpoint to create a JWT token for debugging
 export async function POST(request: NextRequest) {
-  const sessionId = createTestSession();
-  console.log('Test session created:', sessionId);
+  const token = createTestJWT();
+  console.log('Test JWT created');
 
-  const response = NextResponse.json({ message: 'Test session created', sessionId });
-  response.cookies.set('sessionId', sessionId, {
+  const response = NextResponse.json({ message: 'Test JWT created' });
+  response.cookies.set('authToken', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
@@ -18,25 +18,25 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const sessionId = request.cookies.get('sessionId')?.value;
-  console.log('Auth check - Session ID:', sessionId);
+  const token = request.cookies.get('authToken')?.value;
+  console.log('Auth check - JWT token present:', !!token);
 
-  if (!sessionId) {
-    console.log('Auth check - No session ID found');
+  if (!token) {
+    console.log('Auth check - No JWT token found');
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  const session = getSession(sessionId);
-  console.log('Auth check - Session found:', !!session);
+  const decoded = verifyJWT(token);
+  console.log('Auth check - JWT verified:', !!decoded);
 
-  if (!session) {
-    console.log('Auth check - Invalid or expired session');
+  if (!decoded) {
+    console.log('Auth check - Invalid or expired JWT token');
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
   const users = getAdminUsers();
-  const user = users.find(u => u.id === session.userId);
-  console.log('Auth check - User found:', !!user, 'User ID:', session.userId);
+  const user = users.find(u => u.id === decoded.userId);
+  console.log('Auth check - User found:', !!user, 'User ID:', decoded.userId);
 
   if (!user) {
     console.log('Auth check - User not found in database');

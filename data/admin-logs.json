@@ -1009,5 +1009,24 @@
     "userId": 1,
     "details": "User logged out",
     "timestamp": "2025-10-27T02:25:24.627Z"
+  },
+  {
+    "id": "1761532194672",
+    "action": "login",
+    "userId": 1,
+    "details": "User admin logged in successfully",
+    "timestamp": "2025-10-27T02:29:54.672Z"
+  },
+  {
+    "id": "1761532197055",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:29:57.055Z"
+  },
+  {
+    "id": "1761532197148",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:29:57.148Z"
   }
 ]

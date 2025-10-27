@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminUsers, verifyPassword, createSession, logAction } from '@/lib/auth';
+import { getAdminUsers, verifyPassword, createJWT, logAction } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   let requestBody: any = null;
@@ -100,18 +100,18 @@ export async function POST(request: NextRequest) {
       }, { status: 401 });
     }
 
-    // Create session
-    console.log('Creating session...');
-    const sessionId = createSession(user.id);
+    // Create JWT token
+    console.log('Creating JWT token...');
+    const token = createJWT(user.id);
 
-    if (!sessionId) {
-      console.error('Failed to create session');
+    if (!token) {
+      console.error('Failed to create JWT token');
       return NextResponse.json({
-        error: 'Failed to create session'
+        error: 'Failed to create authentication token'
       }, { status: 500 });
     }
 
-    console.log('Session created successfully:', sessionId);
+    console.log('JWT token created successfully');
 
     // Log the login action
     try {
@@ -131,8 +131,8 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Set secure session cookie
-    response.cookies.set('sessionId', sessionId, {
+    // Set secure JWT cookie
+    response.cookies.set('authToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
