@@ -1,73 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { requireAuth } from '@/lib/middleware';
 import { logAction } from '@/lib/auth';
-
-interface Event {
-  id: string;
-  venue: string;
-  city: string;
-  category: "weddings" | "corporate" | "decor" | "all";
-  image: string;
-  title: string;
-  description: string;
-  pricing?: {
-    packageType: "Essentials" | "Complete" | "Luxury";
-    baseCost: number;
-    markup: number;
-    totalPrice: number;
-    depositAmount: number;
-    midPayment: number;
-    finalPayment: number;
-  };
-  services?: Array<{
-    id: string;
-    name: string;
-    type: string;
-    description: string;
-    supplierCost: number;
-    quantity: number;
-    totalCost: number;
-  }>;
-  onboardingStatus?: "inquiry" | "deposit_paid" | "planning" | "finalized" | "executed" | "completed";
-  clientInfo?: {
-    name: string;
-    email: string;
-    phone: string;
-    contactMethod: "Email" | "Phone" | "WhatsApp";
-  };
-  timeline?: {
-    eventDate: string;
-    depositDue: string;
-    midPaymentDue: string;
-    finalPaymentDue: string;
-  };
-  phases?: Array<{
-    name: string;
-    status: "pending" | "completed";
-    checklist: string[];
-  }>;
-}
+import {
+  EventPhase,
+  EventRecord,
+  OnboardingStatus,
+} from '@/lib/domain/events';
+import { requireAuth } from '@/lib/middleware';
+import { readJsonFile, resolveDataPath, writeJsonFile } from '@/lib/server/json-store';
 
 interface OnboardingUpdate {
-  phases?: Array<{
-    name: string;
-    status: "pending" | "completed";
-    checklist: string[];
-  }>;
-  onboardingStatus?: "inquiry" | "deposit_paid" | "planning" | "finalized" | "executed" | "completed";
+  phases?: EventPhase[];
+  onboardingStatus?: OnboardingStatus;
 }
 
-const EVENTS_PATH = path.join(process.cwd(), 'data', 'events.json');
+const EVENTS_PATH = resolveDataPath('events.json');
 
-function getEvents() {
-  const data = fs.readFileSync(EVENTS_PATH, 'utf-8');
-  return JSON.parse(data);
+function getEvents(): EventRecord[] {
+  return readJsonFile<EventRecord[]>(EVENTS_PATH);
 }
 
-function saveEvents(events: Event[]) {
-  fs.writeFileSync(EVENTS_PATH, JSON.stringify(events, null, 2));
+function saveEvents(events: EventRecord[]) {
+  writeJsonFile(EVENTS_PATH, events);
 }
 
 export async function PUT(
@@ -82,8 +35,8 @@ export async function PUT(
   const { id: eventId } = await params;
   const updateData: OnboardingUpdate = await request.json();
 
-  const events: Event[] = getEvents();
-  const index = events.findIndex((e: Event) => e.id === eventId);
+  const events: EventRecord[] = getEvents();
+  const index = events.findIndex((e: EventRecord) => e.id === eventId);
 
   if (index === -1) {
     return NextResponse.json({ error: 'Event not found' }, { status: 404 });
@@ -118,8 +71,8 @@ export async function PATCH(
   const { id: eventId } = await params;
   const updateData: { phaseIndex?: number; status?: "pending" | "completed" } = await request.json();
 
-  const events: Event[] = getEvents();
-  const index = events.findIndex((e: Event) => e.id === eventId);
+  const events: EventRecord[] = getEvents();
+  const index = events.findIndex((e: EventRecord) => e.id === eventId);
 
   if (index === -1) {
     return NextResponse.json({ error: 'Event not found' }, { status: 404 });

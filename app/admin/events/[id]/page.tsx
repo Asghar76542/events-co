@@ -33,83 +33,15 @@ import {
   DollarSign
 } from 'lucide-react'
 import Image from 'next/image'
+import {
+  EVENT_CATEGORY_LABELS,
+  EventRecord,
+  ONBOARDING_STATUS_LABELS,
+  PACKAGE_TYPE_CONFIG,
+  Service,
+} from '@/lib/domain/events'
 
-interface Event {
-  id: string
-  venue: string
-  city: string
-  category: 'weddings' | 'corporate' | 'decor' | 'all'
-  image: string
-  title: string
-  description: string
-  pricing?: {
-    packageType: "Essentials" | "Complete" | "Luxury";
-    baseCost: number;
-    markup: number;
-    totalPrice: number;
-    depositAmount: number;
-    midPayment: number;
-    finalPayment: number;
-  };
-  services?: Array<{
-    id: string;
-    name: string;
-    type: string;
-    description: string;
-    supplierCost: number;
-    quantity: number;
-    totalCost: number;
-  }>;
-  onboardingStatus?: "inquiry" | "deposit_paid" | "planning" | "finalized" | "executed" | "completed";
-  clientInfo?: {
-    name: string;
-    email?: string;
-    phone?: string;
-    contactMethod?: "Email" | "Phone" | "WhatsApp";
-  };
-  timeline?: {
-    eventDate?: string;
-    depositDue?: string;
-    midPaymentDue?: string;
-    finalPaymentDue?: string;
-  };
-  phases?: Array<{
-    name: string;
-    status: "pending" | "completed";
-    checklist: string[];
-  }>;
-}
-
-interface Service {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  baseCost: number;
-  unit: string;
-}
-
-const CATEGORIES = {
-  weddings: 'Weddings',
-  corporate: 'Corporate',
-  decor: 'Decor',
-  all: 'All'
-} as const
-
-const PACKAGE_TYPES = {
-  'Essentials': { label: 'Essentials', markup: 0.30 },
-  'Complete': { label: 'Complete', markup: 0.32 },
-  'Luxury': { label: 'Luxury', markup: 0.35 }
-} as const
-
-const ONBOARDING_STATUSES = {
-  inquiry: 'Inquiry',
-  deposit_paid: 'Deposit Paid',
-  planning: 'Planning',
-  finalized: 'Finalized',
-  executed: 'Executed',
-  completed: 'Completed'
-} as const
+type Event = EventRecord
 
 export default function EventDetailPage() {
   const params = useParams()
@@ -319,7 +251,7 @@ export default function EventDetailPage() {
             <div className="flex items-center gap-2 text-muted-foreground">
               <MapPin className="h-4 w-4" />
               <span>{event.venue}, {event.city}</span>
-              <Badge variant="secondary">{CATEGORIES[event.category]}</Badge>
+              <Badge variant="secondary">{EVENT_CATEGORY_LABELS[event.category]}</Badge>
             </div>
           </div>
         </div>
@@ -544,7 +476,7 @@ export default function EventDetailPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(ONBOARDING_STATUSES).map(([key, label]) => (
+                      {Object.entries(ONBOARDING_STATUS_LABELS).map(([key, label]) => (
                         <SelectItem key={key} value={key}>
                           {label}
                         </SelectItem>
@@ -640,7 +572,7 @@ export default function EventDetailPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(PACKAGE_TYPES).map(([key, config]) => (
+                      {Object.entries(PACKAGE_TYPE_CONFIG).map(([key, config]) => (
                         <SelectItem key={key} value={key}>
                           {config.label} ({(config.markup * 100).toFixed(0)}% markup)
                         </SelectItem>

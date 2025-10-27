@@ -1,29 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { requireAuth } from '@/lib/middleware';
 import { logAction } from '@/lib/auth';
+import { EnquiryRecord } from '@/lib/domain/events';
+import { requireAuth } from '@/lib/middleware';
+import { readJsonFile, resolveDataPath, writeJsonFile } from '@/lib/server/json-store';
 
-interface Enquiry {
-  name: string;
-  email: string;
-  phone: string;
-  eventDate: string;
-  eventType: string;
-  message: string;
-  id: string;
-  timestamp: string;
+const SUBMISSIONS_PATH = resolveDataPath('submissions', 'submissions.json');
+
+function getEnquiries(): EnquiryRecord[] {
+  return readJsonFile<EnquiryRecord[]>(SUBMISSIONS_PATH);
 }
 
-const SUBMISSIONS_PATH = path.join(process.cwd(), 'data', 'submissions', 'submissions.json');
-
-function getEnquiries() {
-  const data = fs.readFileSync(SUBMISSIONS_PATH, 'utf-8');
-  return JSON.parse(data);
-}
-
-function saveEnquiries(enquiries: Enquiry[]) {
-  fs.writeFileSync(SUBMISSIONS_PATH, JSON.stringify(enquiries, null, 2));
+function saveEnquiries(enquiries: EnquiryRecord[]) {
+  writeJsonFile(SUBMISSIONS_PATH, enquiries);
 }
 
 export async function GET(request: NextRequest) {
@@ -32,7 +20,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const enquiries = getEnquiries();
+  const enquiries: EnquiryRecord[] = getEnquiries();
   logAction('view_enquiries', auth.userId);
 
   return NextResponse.json(enquiries);
@@ -51,8 +39,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
-  const enquiries: Enquiry[] = getEnquiries();
-  const newEnquiry: Enquiry = {
+  const enquiries: EnquiryRecord[] = getEnquiries();
+  const newEnquiry: EnquiryRecord = {
     id: Date.now().toString(),
     timestamp: new Date().toISOString(),
     name,
@@ -83,8 +71,8 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'ID is required' }, { status: 400 });
   }
 
-  const enquiries: Enquiry[] = getEnquiries();
-  const index = enquiries.findIndex((e: Enquiry) => e.id === id);
+  const enquiries: EnquiryRecord[] = getEnquiries();
+  const index = enquiries.findIndex((e: EnquiryRecord) => e.id === id);
 
   if (index === -1) {
     return NextResponse.json({ error: 'Enquiry not found' }, { status: 404 });
@@ -110,8 +98,8 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'ID is required' }, { status: 400 });
   }
 
-  const enquiries: Enquiry[] = getEnquiries();
-  const newEnquiries = enquiries.filter((e: Enquiry) => e.id !== id);
+  const enquiries: EnquiryRecord[] = getEnquiries();
+  const newEnquiries = enquiries.filter((e: EnquiryRecord) => e.id !== id);
 
   if (newEnquiries.length === enquiries.length) {
     return NextResponse.json({ error: 'Enquiry not found' }, { status: 404 });

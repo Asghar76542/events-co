@@ -41,111 +41,58 @@ import {
   AlertCircle,
   FileText
 } from 'lucide-react'
-
-interface Service {
-  id: string
-  name: string
-  category: string
-  description: string
-  baseCost: number
-  unit: string
-}
+import {
+  ContactMethod,
+  EVENT_CATEGORY_LABELS,
+  EventCategory,
+  EventPhase,
+  EventPricing,
+  EventRecord,
+  EventService,
+  EnquiryRecord,
+  PACKAGE_TYPE_CONFIG,
+  PackageType,
+  Service,
+  createEventId,
+} from '@/lib/domain/events'
 
 interface EventData {
   id?: string
   title: string
-  category: 'weddings' | 'corporate' | 'decor' | 'all'
+  category: EventCategory
   venue: string
   city: string
   description: string
   image: string
-  packageType: 'Essentials' | 'Complete' | 'Luxury'
+  packageType: PackageType
   eventDate: string
-  services: Array<{
-    id: string
-    name: string
-    type: string
-    description: string
-    supplierCost: number
-    quantity: number
-    totalCost: number
-  }>
+  services: EventService[]
   clientInfo: {
     name: string
     email: string
     phone: string
-    contactMethod: 'Email' | 'Phone' | 'WhatsApp'
+    contactMethod: ContactMethod
   }
-  pricing?: {
-    packageType: string
-    baseCost: number
-    markup: number
-    totalPrice: number
-    depositAmount: number
-    midPayment: number
-    finalPayment: number
-  }
-  onboardingStatus?: 'inquiry' | 'deposit_paid' | 'planning' | 'finalized' | 'executed' | 'completed'
-  timeline?: {
-    eventDate: string
-    depositDue: string
-    midPaymentDue: string
-    finalPaymentDue: string
-  }
-  phases?: Array<{
-    name: string
-    status: 'pending' | 'completed'
-    checklist: string[]
-  }>
-}
-
-interface Enquiry {
-  id: string
-  name: string
-  email: string
-  phone: string
-  eventDate: string
-  eventType: string
-  message: string
-  timestamp: string
+  pricing?: EventPricing
+  onboardingStatus?: EventRecord['onboardingStatus']
+  timeline?: EventRecord['timeline']
+  phases?: EventPhase[]
 }
 
 interface UnifiedEventModalProps {
   isOpen: boolean
   onClose: () => void
   onSave: (eventData: EventData) => Promise<void>
-  enquiry?: Enquiry | null
+  enquiry?: EnquiryRecord | null
   existingEvent?: EventData | null
   services: Service[]
 }
 
-const CATEGORIES = {
-  weddings: 'Weddings',
-  corporate: 'Corporate',
-  decor: 'Decor',
-  all: 'All'
-} as const
-
-const PACKAGE_TYPES = {
-  'Essentials': { label: 'Essentials', markup: 0.30 },
-  'Complete': { label: 'Complete', markup: 0.32 },
-  'Luxury': { label: 'Luxury', markup: 0.35 }
-} as const
-
-const CONTACT_METHODS = {
-  'Email': 'Email',
-  'Phone': 'Phone',
-  'WhatsApp': 'WhatsApp'
-} as const
-
-const ONBOARDING_STATUSES = {
-  inquiry: 'Inquiry',
-  deposit_paid: 'Deposit Paid',
-  planning: 'Planning',
-  finalized: 'Finalized',
-  executed: 'Executed',
-  completed: 'Completed'
-} as const
+const CONTACT_METHODS: Record<ContactMethod, string> = {
+  Email: 'Email',
+  Phone: 'Phone',
+  WhatsApp: 'WhatsApp',
+}
 
 export default function UnifiedEventModal({
   isOpen,
@@ -220,7 +167,7 @@ export default function UnifiedEventModal({
       // Pre-populate from enquiry
       setEventData({
         title: `${enquiry.name}'s ${enquiry.eventType}`,
-        category: enquiry.eventType as 'weddings' | 'corporate' | 'decor' | 'all',
+        category: enquiry.eventType,
         venue: 'To be determined',
         city: '',
         description: enquiry.message,
@@ -365,8 +312,8 @@ export default function UnifiedEventModal({
     return Object.keys(newErrors).length === 0
   }
 
-  const getDefaultServicesForPackage = (packageType: string): Service[] => {
-    const packageServices: Record<string, string[]> = {
+  const getDefaultServicesForPackage = (packageType: PackageType): Service[] => {
+    const packageServices: Record<PackageType, string[]> = {
       'Essentials': ['venue-coordination', 'day-coordination'],
       'Complete': ['full-planning', 'modern-british-menu', 'decor-floral'],
       'Luxury': ['full-planning', 'modern-british-menu', 'decor-floral', 'av-lighting', 'photography']
@@ -376,10 +323,10 @@ export default function UnifiedEventModal({
     return services.filter(service => serviceIds.includes(service.id))
   }
 
-  const handlePackageTypeChange = (packageType: string) => {
+  const handlePackageTypeChange = (packageType: PackageType) => {
     const defaultServices = getDefaultServicesForPackage(packageType)
 
-    const servicesWithDetails = defaultServices.map(service => ({
+    const servicesWithDetails: EventService[] = defaultServices.map(service => ({
       id: service.id,
       name: service.name,
       type: service.category,
@@ -391,7 +338,7 @@ export default function UnifiedEventModal({
 
     setEventData(prev => ({
       ...prev,
-      packageType: packageType as 'Essentials' | 'Complete' | 'Luxury',
+      packageType,
       services: servicesWithDetails
     }))
   }
@@ -443,7 +390,8 @@ export default function UnifiedEventModal({
         baseCost: 0,
         servicesCost: 0,
         subtotal: 0,
-        markup: 0,
+        markupRate: 0,
+        markupAmount: 0,
         total: 0,
         depositAmount: 0,
         midPayment: 0,
@@ -460,19 +408,20 @@ export default function UnifiedEventModal({
     const baseCost = packagePrices[eventData.packageType] || 0
     const servicesCost = eventData.services.reduce((total, service) => total + service.totalCost, 0)
     const subtotal = baseCost + servicesCost
-    const markupRate = PACKAGE_TYPES[eventData.packageType]?.markup || 0.30 // Default to 30% if undefined
-    const markup = subtotal * markupRate
-    const total = subtotal + markup
+    const markupRate = PACKAGE_TYPE_CONFIG[eventData.packageType]?.markup || 0.3 // Default to 30% if undefined
+    const markupAmount = subtotal * markupRate
+    const total = subtotal + markupAmount
 
     return {
       baseCost,
       servicesCost,
       subtotal,
-      markup,
+      markupRate,
+      markupAmount,
       total,
       depositAmount: total * 0.3,
-      midPayment: total * 0.5,
-      finalPayment: total * 0.2
+      midPayment: total * 0.4,
+      finalPayment: total * 0.3
     }
   }
 
@@ -518,29 +467,15 @@ export default function UnifiedEventModal({
 
     setIsLoading(true)
     try {
-      // Calculate pricing with guards for initial render and loading state
-      const pricing = React.useMemo(() => {
-        if (isInitialLoad) {
-          return {
-            baseCost: 0,
-            servicesCost: 0,
-            subtotal: 0,
-            markup: 0,
-            total: 0,
-            depositAmount: 0,
-            midPayment: 0,
-            finalPayment: 0
-          }
-        }
-        return calculatePricing()
-      }, [eventData.packageType, eventData.services, isInitialLoad])
+      const pricing = calculatePricing()
 
       const finalEventData: EventData = {
         ...eventData,
+        id: eventData.id ?? createEventId(eventData.title),
         pricing: {
           packageType: eventData.packageType,
           baseCost: pricing.baseCost,
-          markup: pricing.markup,
+          markup: pricing.markupRate,
           totalPrice: pricing.total,
           depositAmount: pricing.depositAmount,
           midPayment: pricing.midPayment,
@@ -613,7 +548,7 @@ export default function UnifiedEventModal({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(CATEGORIES).map(([value, label]) => (
+                    {Object.entries(EVENT_CATEGORY_LABELS).map(([value, label]) => (
                       <SelectItem key={value} value={value}>{label}</SelectItem>
                     ))}
                   </SelectContent>
@@ -630,7 +565,7 @@ export default function UnifiedEventModal({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(PACKAGE_TYPES).map(([value, config]) => (
+                    {Object.entries(PACKAGE_TYPE_CONFIG).map(([value, config]) => (
                       <SelectItem key={value} value={value}>
                         {config.label} ({(config.markup * 100).toFixed(0)}% markup)
                       </SelectItem>
@@ -890,8 +825,8 @@ export default function UnifiedEventModal({
                       <span>£{pricing.subtotal.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Markup ({(PACKAGE_TYPES[eventData.packageType]?.markup * 100 || 30).toFixed(0)}%):</span>
-                      <span>£{pricing.markup.toLocaleString()}</span>
+                      <span>Markup ({(PACKAGE_TYPE_CONFIG[eventData.packageType]?.markup * 100 || 30).toFixed(0)}%):</span>
+                      <span>£{pricing.markupAmount.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-lg font-bold border-t pt-2">
                       <span>Total Price:</span>
@@ -908,7 +843,7 @@ export default function UnifiedEventModal({
                         )}
                       </div>
                       <div className="text-center">
-                        <div className="text-sm text-muted-foreground">Mid Payment (50%)</div>
+                        <div className="text-sm text-muted-foreground">Mid Payment (40%)</div>
                         <div className="font-medium">£{pricing.midPayment.toLocaleString()}</div>
                         {eventData.timeline?.midPaymentDue && (
                           <div className="text-xs text-muted-foreground">
@@ -917,7 +852,7 @@ export default function UnifiedEventModal({
                         )}
                       </div>
                       <div className="text-center">
-                        <div className="text-sm text-muted-foreground">Final Payment (20%)</div>
+                        <div className="text-sm text-muted-foreground">Final Payment (30%)</div>
                         <div className="font-medium">£{pricing.finalPayment.toLocaleString()}</div>
                         {eventData.timeline?.finalPaymentDue && (
                           <div className="text-xs text-muted-foreground">

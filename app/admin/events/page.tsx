@@ -65,83 +65,14 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import UnifiedEventModal from '@/components/unified-event-modal'
+import {
+  EVENT_CATEGORY_LABELS,
+  EventRecord,
+  PACKAGE_TYPE_CONFIG,
+  Service,
+} from '@/lib/domain/events'
 
-interface Event {
-  id: string
-  venue: string
-  city: string
-  category: 'weddings' | 'corporate' | 'decor' | 'all'
-  image: string
-  title: string
-  description: string
-  pricing?: {
-    packageType: "Essentials" | "Complete" | "Luxury";
-    baseCost: number;
-    markup: number;
-    totalPrice: number;
-    depositAmount: number;
-    midPayment: number;
-    finalPayment: number;
-  };
-  services?: Array<{
-    id: string;
-    name: string;
-    type: string;
-    description: string;
-    supplierCost: number;
-    quantity: number;
-    totalCost: number;
-  }>;
-  onboardingStatus?: "inquiry" | "deposit_paid" | "planning" | "finalized" | "executed" | "completed";
-  clientInfo?: {
-    name: string;
-    email?: string;
-    phone?: string;
-    contactMethod?: "Email" | "Phone" | "WhatsApp";
-  };
-  timeline?: {
-    eventDate?: string;
-    depositDue?: string;
-    midPaymentDue?: string;
-    finalPaymentDue?: string;
-  };
-  phases?: Array<{
-    name: string;
-    status: "pending" | "completed";
-    checklist: string[];
-  }>;
-}
-
-const CATEGORIES = {
-  weddings: 'Weddings',
-  corporate: 'Corporate',
-  decor: 'Decor',
-  all: 'All'
-} as const
-
-const PACKAGE_TYPES = {
-  'Essentials': { label: 'Essentials', markup: 0.30 },
-  'Complete': { label: 'Complete', markup: 0.32 },
-  'Luxury': { label: 'Luxury', markup: 0.35 }
-} as const
-
-const ONBOARDING_STATUSES = {
-  inquiry: 'Inquiry',
-  deposit_paid: 'Deposit Paid',
-  planning: 'Planning',
-  finalized: 'Finalized',
-  executed: 'Executed',
-  completed: 'Completed'
-} as const
-
-interface Service {
-  id: string
-  name: string
-  category: string
-  description: string
-  baseCost: number
-  unit: string
-}
+type Event = EventRecord
 
 export default function AdminEvents() {
   const router = useRouter()
@@ -155,9 +86,6 @@ export default function AdminEvents() {
   const [isUnifiedModalOpen, setIsUnifiedModalOpen] = useState(false)
   const { toast } = useToast()
 
-
-  const makeEventId = (title: string) =>
-    `${title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'event'}-${Date.now()}`
 
   const fetchEvents = async () => {
     try {
@@ -363,7 +291,7 @@ export default function AdminEvents() {
                   />
                   <div className="absolute top-2 right-2">
                     <Badge variant="secondary">
-                      {CATEGORIES[event.category]}
+                      {EVENT_CATEGORY_LABELS[event.category]}
                     </Badge>
                   </div>
                   <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center">
@@ -439,7 +367,7 @@ export default function AdminEvents() {
 
         {/* Pricing Tab - Group by Package Types */}
         <TabsContent value="pricing" className="space-y-6">
-          {Object.entries(PACKAGE_TYPES).map(([packageType, config]) => {
+          {Object.entries(PACKAGE_TYPE_CONFIG).map(([packageType, config]) => {
             const packageEvents = filteredEvents.filter(event =>
               event.pricing?.packageType === packageType
             )
@@ -502,7 +430,7 @@ export default function AdminEvents() {
 
         {/* Onboarding Tab - Group by Status */}
         <TabsContent value="onboarding" className="space-y-6">
-          {Object.entries(ONBOARDING_STATUSES).map(([status, label]) => {
+          {Object.entries(ONBOARDING_STATUS_LABELS).map(([status, label]) => {
             const statusEvents = filteredEvents.filter(event =>
               event.onboardingStatus === status
             )

@@ -60,43 +60,24 @@ import {
   DollarSign
 } from 'lucide-react'
 import UnifiedEventModal from '@/components/unified-event-modal'
+import {
+  EnquiryRecord,
+  EventCategory,
+  EventService,
+  PackageType,
+  Service,
+} from '@/lib/domain/events'
 
-interface Enquiry {
-  id: string
-  name: string
-  email: string
-  phone: string
-  eventDate: string
-  eventType: string
-  message: string
-  timestamp: string
-}
-
-interface Service {
-  id: string
-  name: string
-  category: string
-  description: string
-  baseCost: number
-  unit: string
-}
+type Enquiry = EnquiryRecord
 
 interface EventConversionData {
   title: string
-  category: 'weddings' | 'corporate' | 'decor' | 'all'
-  packageType: 'Essentials' | 'Complete' | 'Luxury'
+  category: EventCategory
+  packageType: PackageType
   eventDate: string
   venue: string
   description: string
-  services: Array<{
-    id: string
-    name: string
-    type: string
-    description: string
-    supplierCost: number
-    quantity: number
-    totalCost: number
-  }>
+  services: EventService[]
 }
 
 export default function AdminEnquiries() {
