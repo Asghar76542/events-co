@@ -4,7 +4,6 @@ import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -18,46 +17,38 @@ import {
 } from '@/components/ui/select'
 import {
   User,
-  Calendar,
-  MapPin,
-  Phone,
-  Mail,
-  DollarSign,
-  Package,
   Users,
-  Clock,
-  Plus,
-  Minus,
-  Trash2,
-  CheckCircle,
-  AlertCircle,
-  FileText,
-  X
+  X,
 } from 'lucide-react'
 import {
   ContactMethod,
   EVENT_CATEGORY_LABELS,
   EventCategory,
-  EventPhase,
-  EventPricing,
   EventRecord,
-  EventService,
   EnquiryRecord,
-  PACKAGE_TYPE_CONFIG,
-  PackageType,
-  Service,
-  createEventId,
+  Service as EventService,
 } from '@/lib/domain/events'
 
-// This is a combination of EnquiryRecord and EventRecord
-// to represent the data in the management panel.
-type ManagementItem = Partial<EventRecord> & Partial<EnquiryRecord>;
+interface Service {
+    id: string;
+    name: string;
+    description: string;
+    baseCost: number;
+    unit: 'per_person' | 'event' | 'per_item';
+}
+
+interface ServiceCategory {
+    category: string;
+    services: Service[];
+}
+
+type ManagementItem = Partial<EventRecord> & Partial<EnquiryRecord> & { guestCount?: number };
 
 interface ManagementPanelProps {
   item: ManagementItem | null;
   onClose: () => void;
   onSave: (item: ManagementItem) => void;
-  services: Service[];
+  services: ServiceCategory[];
 }
 
 const CONTACT_METHODS: Record<ContactMethod, string> = {
@@ -66,7 +57,7 @@ const CONTACT_METHODS: Record<ContactMethod, string> = {
   WhatsApp: 'WhatsApp',
 }
 
-export function ManagementPanel({ item, onClose, onSave, services }: ManagementPanelProps) {
+export function ManagementPanel({ item, onClose, onSave, services: serviceCategories }: ManagementPanelProps) {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [editedItem, setEditedItem] = useState<ManagementItem | null>(null);
@@ -85,6 +76,7 @@ export function ManagementPanel({ item, onClose, onSave, services }: ManagementP
                 packageType: 'Essentials',
                 eventDate: item.eventDate || '',
                 services: [],
+                guestCount: 100, // Default guest count
                 clientInfo: {
                   name: item.name || '',
                   email: item.email || '',
@@ -102,13 +94,13 @@ export function ManagementPanel({ item, onClose, onSave, services }: ManagementP
     }
   }, [item]);
 
-  if (!editedItem) return null;
-
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await onSave(editedItem);
-      toast({ title: "Success", description: "Item saved successfully." });
+      if(editedItem) {
+        await onSave(editedItem);
+        toast({ title: "Success", description: "Item saved successfully." });
+      }
     } catch (error) {
       toast({ title: "Error", description: "Failed to save item.", variant: "destructive" });
     } finally {
@@ -128,6 +120,43 @@ export function ManagementPanel({ item, onClose, onSave, services }: ManagementP
     });
   };
 
+  const handleServiceToggle = (service: Service) => {
+    setEditedItem(prev => {
+        if (!prev) return null;
+        const existingServices = prev.services || [];
+        const isSelected = existingServices.some(s => s.id === service.id);
+        let newServices: EventService[];
+        if (isSelected) {
+            newServices = existingServices.filter(s => s.id !== service.id);
+        } else {
+            newServices = [...existingServices, { ...service, quantity: 1, totalCost: service.baseCost, type: service.unit, supplierCost: service.baseCost }];
+        }
+        return { ...prev, services: newServices };
+    });
+  };
+
+  const calculateTotal = () => {
+      if (!editedItem || !editedItem.services) return { subtotal: 0, markup: 0, total: 0 };
+
+      const guestCount = editedItem.guestCount || 1;
+
+      const subtotal = editedItem.services.reduce((acc, service) => {
+          if (service.type === 'per_person') {
+              return acc + (service.supplierCost * guestCount);
+          }
+          return acc + service.totalCost;
+      }, 0);
+
+      const markup = subtotal * 0.35; // 35% markup
+      const total = subtotal + markup;
+
+      return { subtotal, markup, total };
+  }
+
+  if (!editedItem) return null;
+
+  const { subtotal, markup, total } = calculateTotal();
+
   return (
     <div className="fixed inset-y-0 right-0 w-1/2 bg-white border-l border-gray-200 p-6 overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
@@ -139,7 +168,7 @@ export function ManagementPanel({ item, onClose, onSave, services }: ManagementP
         <Card>
           <CardHeader><CardTitle>Overview</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="title">Event Title</Label>
                     <Input id="title" value={editedItem.title || ''} onChange={(e) => handleInputChange('title', e.target.value)} />
@@ -154,6 +183,10 @@ export function ManagementPanel({ item, onClose, onSave, services }: ManagementP
                             ))}
                         </SelectContent>
                     </Select>
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="guestCount">Guest Count</Label>
+                    <Input id="guestCount" type="number" value={editedItem.guestCount || ''} onChange={(e) => handleInputChange('guestCount', parseInt(e.target.value, 10))} />
                 </div>
             </div>
             <div className="space-y-2">
@@ -192,6 +225,42 @@ export function ManagementPanel({ item, onClose, onSave, services }: ManagementP
                         </SelectContent>
                         </Select>
                     </div>
+                </div>
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader><CardTitle>Services</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+                {serviceCategories.map(category => (
+                    <div key={category.category}>
+                        <h4 className="font-semibold mb-2">{category.category}</h4>
+                        <div className="grid grid-cols-2 gap-2">
+                            {category.services.map(service => (
+                                <Button key={service.id} variant={editedItem.services?.some(s => s.id === service.id) ? 'default' : 'outline'} onClick={() => handleServiceToggle(service)}>
+                                    {service.name}
+                                </Button>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader><CardTitle>Pricing</CardTitle></CardHeader>
+            <CardContent className="space-y-2">
+                <div className="flex justify-between">
+                    <span>Subtotal</span>
+                    <span>£{subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                    <span>Markup (35%)</span>
+                    <span>£{markup.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span>£{total.toFixed(2)}</span>
                 </div>
             </CardContent>
         </Card>

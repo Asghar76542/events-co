@@ -36,7 +36,14 @@ type Event = {
   status: 'event';
 };
 
-type ManagementItem = Enquiry | Event;
+type ManagementItem = (Enquiry | Event) & {
+    guestCount?: number;
+    pricing?: {
+        subtotal: number;
+        markup: number;
+        total: number;
+    };
+};
 
 export default function AdminManagement() {
   const [items, setItems] = useState<ManagementItem[]>([])
@@ -104,13 +111,35 @@ export default function AdminManagement() {
 
   const handleSave = async (item: ManagementItem) => {
     const isEvent = 'clientInfo' in item; // A simple check to differentiate
+
+    // Recalculate pricing before saving
+    const guestCount = item.guestCount || 1;
+    const subtotal = (item.services || []).reduce((acc, service) => {
+        if (service.type === 'per_person') {
+            return acc + (service.supplierCost * guestCount);
+        }
+        return acc + service.totalCost;
+    }, 0);
+    const markup = subtotal * 0.35; // 35% markup
+    const total = subtotal + markup;
+
+    const itemToSave = {
+        ...item,
+        guestCount,
+        pricing: {
+            subtotal,
+            markup,
+            total,
+        }
+    };
+
     const url = isEvent ? `/api/admin/events/${item.id}` : `/api/admin/enquiries`;
     const method = 'PUT';
 
     const response = await fetch(url, {
         method: method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(item),
+        body: JSON.stringify(itemToSave),
     });
 
     if (!response.ok) {
