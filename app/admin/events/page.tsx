@@ -68,6 +68,7 @@ import UnifiedEventModal from '@/components/unified-event-modal'
 import {
   EVENT_CATEGORY_LABELS,
   EventRecord,
+  ONBOARDING_STATUS_LABELS,
   PACKAGE_TYPE_CONFIG,
   Service,
 } from '@/lib/domain/events'
