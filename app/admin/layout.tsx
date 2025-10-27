@@ -42,14 +42,9 @@ const navigation = [
     icon: BarChart3,
   },
   {
-    name: 'Enquiries',
-    href: '/admin/enquiries',
+    name: 'Management',
+    href: '/admin/management',
     icon: Users,
-  },
-  {
-    name: 'Events',
-    href: '/admin/events',
-    icon: Calendar,
   },
 ]
 
