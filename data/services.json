@@ -1,68 +1,66 @@
 [
   {
+    "category": "Planning & Coordination",
+    "services": [
+      {
+        "id": "planning-full",
+        "name": "Full Planning & Coordination",
+        "description": "Comprehensive end-to-end event planning, design, and management.",
+        "baseCost": 4500,
+        "unit": "event"
+      },
+      {
+        "id": "planning-partial",
+        "name": "Partial Planning",
+        "description": "Assistance with specific elements of your event, such as supplier sourcing or design.",
+        "baseCost": 2500,
+        "unit": "event"
+      },
+      {
+        "id": "planning-day-of",
+        "name": "Day-of Coordination",
+        "description": "On-the-day management to ensure your event runs smoothly.",
+        "baseCost": 1200,
+        "unit": "event"
+      }
+    ]
+  },
+  {
     "category": "Catering",
     "services": [
       {
-        "id": "catering-3-course-meal",
-        "name": "3-Course Meal",
-        "description": "A 3-course meal for your guests. Price is per person.",
-        "baseCost": 70,
+        "id": "catering-3-course-standard",
+        "name": "3-Course Meal (Standard)",
+        "description": "A high-quality 3-course meal. Price is per person.",
+        "baseCost": 55,
         "unit": "per_person"
       },
       {
-        "id": "catering-buffet",
-        "name": "Buffet",
-        "description": "A buffet-style meal. Price is per person.",
-        "baseCost": 35,
-        "unit": "per_person"
-      },
-      {
-        "id": "catering-evening-buffet",
-        "name": "Evening Buffet",
-        "description": "An evening buffet for later in the event. Price is per person.",
-        "baseCost": 25,
-        "unit": "per_person"
-      },
-      {
-        "id": "catering-modern-british",
-        "name": "Modern British Menu",
-        "description": "A celebration of seasonal, locally-sourced British produce with a contemporary twist.",
+        "id": "catering-3-course-premium",
+        "name": "3-Course Meal (Premium)",
+        "description": "A premium 3-course meal with more luxurious ingredients. Price is per person.",
         "baseCost": 85,
         "unit": "per_person"
       },
       {
-        "id": "catering-italian",
-        "name": "Italian Menu",
-        "description": "Classic, crowd-pleasing flavours from the heart of Italy.",
-        "baseCost": 75,
+        "id": "catering-buffet-standard",
+        "name": "Buffet (Standard)",
+        "description": "A standard buffet selection. Price is per person.",
+        "baseCost": 30,
         "unit": "per_person"
       },
       {
-        "id": "catering-indian",
-        "name": "Indian (North Indian Style) Menu",
-        "description": "Rich, aromatic, and flavorful dishes perfect for a celebration.",
-        "baseCost": 80,
+        "id": "catering-buffet-premium",
+        "name": "Buffet (Premium)",
+        "description": "A premium buffet with a wider selection of dishes. Price is per person.",
+        "baseCost": 50,
         "unit": "per_person"
       },
       {
-        "id": "catering-caribbean",
-        "name": "Caribbean Menu",
-        "description": "Vibrant, spicy, and soulful food with a tropical flair.",
-        "baseCost": 78,
-        "unit": "per_person"
-      },
-      {
-        "id": "catering-middle-eastern",
-        "name": "Middle Eastern (Levantine) Menu",
-        "description": "Aromatic, sociable food designed for sharing and enjoyment.",
-        "baseCost": 72,
-        "unit": "per_person"
-      },
-      {
-        "id": "catering-vegan",
-        "name": "Vegan / Plant-Based Menu",
-        "description": "Creative, delicious, and satisfying plant-based dishes.",
-        "baseCost": 70,
+        "id": "catering-evening-food",
+        "name": "Evening Food",
+        "description": "Lighter fare for the evening part of your event. Price is per person.",
+        "baseCost": 25,
         "unit": "per_person"
       }
     ]
@@ -71,10 +69,17 @@
     "category": "Venue",
     "services": [
       {
-        "id": "venue-dry-hire",
-        "name": "Dry Hire",
-        "description": "Venue only. Price is for the entire event.",
-        "baseCost": 6500,
+        "id": "venue-dry-hire-standard",
+        "name": "Dry Hire (Standard)",
+        "description": "Standard venue-only hire.",
+        "baseCost": 6000,
+        "unit": "event"
+      },
+      {
+        "id": "venue-dry-hire-premium",
+        "name": "Dry Hire (Premium)",
+        "description": "Premium venue-only hire, typically for more exclusive locations.",
+        "baseCost": 9000,
         "unit": "event"
       }
     ]
@@ -83,17 +88,24 @@
     "category": "Photography & Videography",
     "services": [
       {
-        "id": "media-photographer",
-        "name": "Photographer (full day)",
-        "description": "Full day coverage by a professional photographer.",
+        "id": "media-photo-full-day",
+        "name": "Photographer (Full Day)",
+        "description": "A professional photographer for the full duration of the event.",
         "baseCost": 1600,
         "unit": "event"
       },
       {
-        "id": "media-videographer",
-        "name": "Videographer (full day)",
-        "description": "Full day coverage by a professional videographer.",
+        "id": "media-video-full-day",
+        "name": "Videographer (Full Day)",
+        "description": "A professional videographer for the full duration of the event.",
         "baseCost": 1500,
+        "unit": "event"
+      },
+      {
+        "id": "media-photo-video-bundle",
+        "name": "Photo & Video Bundle (Full Day)",
+        "description": "A photographer and videographer for the full day, often at a discounted rate.",
+        "baseCost": 2800,
         "unit": "event"
       }
     ]
@@ -102,69 +114,24 @@
     "category": "Flowers & Decor",
     "services": [
       {
-        "id": "decor-wedding-flowers",
-        "name": "Wedding Flowers",
-        "description": "Floral arrangements for the wedding.",
-        "baseCost": 2000,
-        "unit": "event"
-      },
-      {
-        "id": "decor-venue-decor",
-        "name": "Venue Decor",
-        "description": "Decoration for the venue, excluding flowers.",
-        "baseCost": 1600,
-        "unit": "event"
-      }
-    ]
-  },
-  {
-    "category": "AV & Lighting",
-    "services": [
-      {
-        "id": "technical-pa-system",
-        "name": "PA & Sound System",
-        "description": "Basic PA and sound system.",
-        "baseCost": 120,
-        "unit": "event"
-      },
-      {
-        "id": "technical-event-lighting",
-        "name": "Event Lighting",
-        "description": "Basic event lighting package.",
-        "baseCost": 120,
-        "unit": "event"
-      },
-      {
-        "id": "technical-av-technician",
-        "name": "AV Technician",
-        "description": "AV technician for an 8-hour day.",
-        "baseCost": 425,
-        "unit": "event"
-      },
-      {
-        "id": "technical-event-wifi",
-        "name": "Event WiFi & Internet",
-        "description": "Dedicated WiFi for the event.",
+        "id": "decor-flowers-standard",
+        "name": "Floral Design (Standard)",
+        "description": "Standard floral arrangements for the venue and bridal party.",
         "baseCost": 1500,
         "unit": "event"
-      }
-    ]
-  },
-  {
-    "category": "Transport",
-    "services": [
+      },
       {
-        "id": "logistics-luxury-car",
-        "name": "Luxury Car (Rolls-Royce)",
-        "description": "Luxury car for 3-4 hours.",
-        "baseCost": 725,
+        "id": "decor-flowers-luxury",
+        "name": "Floral Design (Luxury)",
+        "description": "Luxury, elaborate floral arrangements and installations.",
+        "baseCost": 3500,
         "unit": "event"
       },
       {
-        "id": "logistics-coach-hire",
-        "name": "Coach Hire (50 seats)",
-        "description": "Coach hire for guests.",
-        "baseCost": 500,
+        "id": "decor-venue-styling",
+        "name": "Venue Styling & Decor",
+        "description": "Comprehensive venue styling, including lighting, furniture, and props (excluding flowers).",
+        "baseCost": 1800,
         "unit": "event"
       }
     ]
@@ -173,77 +140,44 @@
     "category": "Entertainment",
     "services": [
       {
-        "id": "entertainment-wedding-band",
-        "name": "Wedding Band (4-piece)",
-        "description": "A 4-piece wedding band.",
-        "baseCost": 1700,
-        "unit": "event"
-      },
-      {
         "id": "entertainment-dj",
-        "name": "Wedding DJ",
-        "description": "DJ for a 4-hour set.",
+        "name": "DJ (4-hour set)",
+        "description": "A professional DJ for a 4-hour set.",
         "baseCost": 900,
         "unit": "event"
-      }
-    ]
-  },
-  {
-    "category": "Marquee Hire",
-    "services": [
-      {
-        "id": "marquee-structure-only",
-        "name": "Marquee Structure Only (100 guests)",
-        "description": "Marquee structure for 100 guests.",
-        "baseCost": 2750,
-        "unit": "event"
       },
       {
-        "id": "marquee-full-package",
-        "name": "Full Marquee Package (100 guests)",
-        "description": "Includes furniture, lighting, toilets, etc.",
-        "baseCost": 12750,
+        "id": "entertainment-band-4-piece",
+        "name": "Live Band (4-piece)",
+        "description": "A 4-piece live band for the evening entertainment.",
+        "baseCost": 1700,
         "unit": "event"
       }
     ]
   },
   {
-    "category": "Stationery, Printing & Gifts",
+    "category": "Stationery & Gifts",
     "services": [
       {
-        "id": "stationery-custom-invitations",
+        "id": "stationery-invites-printed",
         "name": "Custom Printed Invitations",
-        "description": "Custom printed invitations. Price is per invite.",
+        "description": "Bespoke printed invitations. Price is per person/household.",
         "baseCost": 4,
         "unit": "per_person"
       },
       {
-        "id": "stationery-digital-invitations",
-        "name": "Digital Invitations",
-        "description": "Bespoke design with RSVP website.",
-        "baseCost": 100,
+        "id": "stationery-invites-digital",
+        "name": "Digital Invitations & RSVP Website",
+        "description": "A custom-designed digital invitation and RSVP website.",
+        "baseCost": 120,
         "unit": "event"
       },
       {
         "id": "gifts-favors",
-        "name": "Event Gifts (Favors)",
-        "description": "Gifts for guests. Price is per guest.",
-        "baseCost": 2,
+        "name": "Guest Favors",
+        "description": "Small gifts for each guest. Price is per person.",
+        "baseCost": 2.5,
         "unit": "per_person"
-      },
-      {
-        "id": "stationery-booklets",
-        "name": "Event Booklets (A5, 8pp)",
-        "description": "Event booklets. Price is per booklet.",
-        "baseCost": 1,
-        "unit": "per_person"
-      },
-      {
-        "id": "stationery-a1-posters",
-        "name": "A1 Posters",
-        "description": "A1 posters. Price is per poster.",
-        "baseCost": 15,
-        "unit": "per_item"
       }
     ]
   }
