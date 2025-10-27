@@ -44,7 +44,10 @@ interface ServiceCategory {
     services: Service[];
 }
 
-type ManagementItem = Partial<EventRecord> & Partial<EnquiryRecord> & { guestCount?: number };
+type ManagementItem = Partial<EventRecord> & Partial<EnquiryRecord> & { 
+    guestCount?: number;
+    discount?: number;
+ };
 
 interface ManagementPanelProps {
   item: ManagementItem | null;
@@ -63,6 +66,7 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [editedItem, setEditedItem] = useState<ManagementItem | null>(null);
+  const [discount, setDiscount] = useState(0);
 
   useEffect(() => {
     if (item) {
@@ -79,6 +83,7 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
                 eventDate: item.eventDate || '',
                 services: [],
                 guestCount: 100, // Default guest count
+                discount: 0,
                 clientInfo: {
                   name: item.name || '',
                   email: item.email || '',
@@ -97,6 +102,7 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
             });
         } else {
             setEditedItem(item);
+            setDiscount(item.discount || 0);
         }
     } else {
         setEditedItem(null);
@@ -107,7 +113,11 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
     setIsLoading(true);
     try {
       if(editedItem) {
-        await onSave(editedItem);
+        const itemToSave = {
+            ...editedItem,
+            discount,
+        };
+        await onSave(itemToSave);
         toast({ title: "Success", description: "Item saved successfully." });
       }
     } catch (error) {
@@ -165,7 +175,7 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
   };
 
   const calculateTotal = () => {
-      if (!editedItem || !editedItem.services) return { subtotal: 0, markup: 0, total: 0 };
+      if (!editedItem || !editedItem.services) return { subtotal: 0, markup: 0, rrp: 0, total: 0 };
 
       const guestCount = editedItem.guestCount || 1;
 
@@ -177,14 +187,15 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
       }, 0);
 
       const markup = subtotal * 0.35; // 35% markup
-      const total = subtotal + markup;
+      const rrp = subtotal + markup;
+      const total = rrp - discount;
 
-      return { subtotal, markup, total };
+      return { subtotal, markup, rrp, total };
   }
 
   if (!editedItem) return null;
 
-  const { subtotal, markup, total } = calculateTotal();
+  const { subtotal, markup, rrp, total } = calculateTotal();
 
   return (
     <div className="fixed inset-y-0 right-0 w-1/2 bg-white border-l border-gray-200 p-6 overflow-y-auto">
@@ -286,6 +297,19 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
                 <div className="flex justify-between">
                     <span>Markup (35%)</span>
                     <span>£{markup.toFixed(2)}</span>
+                </div>
+                 <div className="flex justify-between">
+                    <span>RRP</span>
+                    <span>£{rrp.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span>Discount</span>
+                    <Input
+                        type="number"
+                        value={discount}
+                        onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
+                        className="w-24"
+                    />
                 </div>
                 <div className="flex justify-between font-bold text-lg">
                     <span>Total</span>

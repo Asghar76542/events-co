@@ -38,9 +38,11 @@ type Event = {
 
 type ManagementItem = (Enquiry | Event) & {
     guestCount?: number;
+    discount?: number;
     pricing?: {
         subtotal: number;
         markup: number;
+        rrp: number;
         total: number;
     };
 };
@@ -132,7 +134,8 @@ export default function AdminManagement() {
         return acc + service.totalCost;
     }, 0);
     const markup = subtotal * 0.35; // 35% markup
-    const total = subtotal + markup;
+    const rrp = subtotal + markup;
+    const total = rrp - (item.discount || 0);
 
     const itemToSave = {
         ...item,
@@ -140,6 +143,7 @@ export default function AdminManagement() {
         pricing: {
             subtotal,
             markup,
+            rrp,
             total,
         }
     };
