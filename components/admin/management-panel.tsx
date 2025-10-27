@@ -27,7 +27,9 @@ import {
   EventRecord,
   EnquiryRecord,
   Service as EventService,
+  EventPhase
 } from '@/lib/domain/events'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface Service {
     id: string;
@@ -84,7 +86,14 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
                   contactMethod: 'Email'
                 },
                 onboardingStatus: 'inquiry',
-                status: 'event'
+                status: 'event',
+                phases: [
+                    { name: "Booking Secured", status: "pending", checklist: [{ name: "Contract signed", completed: false }, { name: "Deposit received", completed: false }] },
+                    { name: "Planning & Supplier Management", status: "pending", checklist: [{ name: "Venue confirmed", completed: false }, { name: "Supplier quotes approved", completed: false }] },
+                    { name: "Day-of Coordination", status: "pending", checklist: [{ name: "Timeline finalized", completed: false }, { name: "Staff briefed", completed: false }, { name: "Equipment ready", completed: false }] },
+                    { name: "Event Execution", status: "pending", checklist: [{ name: "Event completed successfully", completed: false }, { name: "Client feedback collected", completed: false }] },
+                    { name: "Post-Event Follow-up", status: "pending", checklist: [{ name: "Final payment received", completed: false }, { name: "Thank you notes sent", completed: false }] }
+                ]
             });
         } else {
             setEditedItem(item);
@@ -132,6 +141,26 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
             newServices = [...existingServices, { ...service, quantity: 1, totalCost: service.baseCost, type: service.unit, supplierCost: service.baseCost }];
         }
         return { ...prev, services: newServices };
+    });
+  };
+
+  const handlePhaseStatusChange = (phaseIndex: number, newStatus: 'pending' | 'completed') => {
+    setEditedItem(prev => {
+        if (!prev || !prev.phases) return prev;
+        const newPhases = [...prev.phases];
+        newPhases[phaseIndex].status = newStatus;
+        return { ...prev, phases: newPhases };
+    });
+  };
+
+  const handleChecklistItemToggle = (phaseIndex: number, itemIndex: number, completed: boolean) => {
+    setEditedItem(prev => {
+        if (!prev || !prev.phases) return prev;
+        const newPhases = [...prev.phases] as EventPhase[];
+        const newChecklist = [...newPhases[phaseIndex].checklist];
+        newChecklist[itemIndex] = { ...newChecklist[itemIndex], completed };
+        newPhases[phaseIndex] = { ...newPhases[phaseIndex], checklist: newChecklist };
+        return { ...prev, phases: newPhases };
     });
   };
 
@@ -262,6 +291,44 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
                     <span>Total</span>
                     <span>£{total.toFixed(2)}</span>
                 </div>
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader><CardTitle>Event Progress</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+                {editedItem.phases?.map((phase, phaseIndex) => (
+                    <div key={phaseIndex} className="border p-4 rounded-lg">
+                        <div className="flex justify-between items-center">
+                            <h4 className="font-semibold">{phase.name}</h4>
+                            <Select
+                                value={phase.status}
+                                onValueChange={(newStatus) => handlePhaseStatusChange(phaseIndex, newStatus as 'pending' | 'completed')}
+                            >
+                                <SelectTrigger className="w-[120px]">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="pending">Pending</SelectItem>
+                                    <SelectItem value="completed">Completed</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="mt-4 space-y-2">
+                            {phase.checklist.map((item, itemIndex) => (
+                                <div key={itemIndex} className="flex items-center">
+                                    <Checkbox
+                                        id={`checklist-${phaseIndex}-${itemIndex}`}
+                                        checked={item.completed}
+                                        onCheckedChange={(checked) => handleChecklistItemToggle(phaseIndex, itemIndex, !!checked)}
+                                        className="mr-2"
+                                    />
+                                    <label htmlFor={`checklist-${phaseIndex}-${itemIndex}`} className="text-sm">{item.name}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </CardContent>
         </Card>
 

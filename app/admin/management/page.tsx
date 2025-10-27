@@ -60,6 +60,17 @@ export default function AdminManagement() {
     setSelectedItem(null);
   };
 
+  const handleAddNew = () => {
+    setSelectedItem({
+      id: '', // Will be generated on save
+      name: 'New Enquiry',
+      email: '',
+      eventType: 'weddings',
+      timestamp: new Date().toISOString(),
+      status: 'enquiry',
+    });
+  };
+
   const fetchItems = async () => {
     try {
       setLoading(true)
@@ -133,8 +144,8 @@ export default function AdminManagement() {
         }
     };
 
-    const url = isEvent ? `/api/admin/events/${item.id}` : `/api/admin/enquiries`;
-    const method = 'PUT';
+    const url = isEvent && item.id ? `/api/admin/events/${item.id}` : '/api/admin/enquiries';
+    const method = item.id ? 'PUT' : 'POST';
 
     const response = await fetch(url, {
         method: method,
@@ -190,7 +201,7 @@ export default function AdminManagement() {
             <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={handleAddNew}>
             <Plus className="mr-2 h-4 w-4" />
             Add New
           </Button>
