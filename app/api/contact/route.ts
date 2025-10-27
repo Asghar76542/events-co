@@ -36,6 +36,8 @@ export async function POST(request: NextRequest) {
     const sanitizedEmail = sanitizeInput(email);
     const sanitizedEventType = sanitizeInput(eventType);
     const sanitizedMessage = sanitizeInput(message);
+    const sanitizedPhone = body.phone ? sanitizeInput(body.phone) : undefined;
+    const sanitizedEventDate = body.eventDate ? sanitizeInput(body.eventDate) : undefined;
 
     // Ensure directory exists
     const dir = path.dirname(submissionsPath);
@@ -57,6 +59,8 @@ export async function POST(request: NextRequest) {
       email: sanitizedEmail,
       eventType: sanitizedEventType,
       message: sanitizedMessage,
+      ...(sanitizedPhone && { phone: sanitizedPhone }),
+      ...(sanitizedEventDate && { eventDate: sanitizedEventDate }),
       id: randomUUID(),
       timestamp: new Date().toISOString(),
     };

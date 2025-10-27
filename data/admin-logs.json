@@ -538,5 +538,476 @@
     "action": "view_events",
     "userId": 1,
     "timestamp": "2025-10-27T00:16:48.864Z"
+  },
+  {
+    "id": "1761528435249",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:27:15.249Z"
+  },
+  {
+    "id": "1761528435498",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:27:15.498Z"
+  },
+  {
+    "id": "1761528444304",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:27:24.304Z"
+  },
+  {
+    "id": "1761528444477",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:27:24.477Z"
+  },
+  {
+    "id": "1761528462006",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:27:42.006Z"
+  },
+  {
+    "id": "1761528462154",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:27:42.154Z"
+  },
+  {
+    "id": "1761528500298",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:28:20.298Z"
+  },
+  {
+    "id": "1761528500556",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:28:20.556Z"
+  },
+  {
+    "id": "1761528505854",
+    "action": "view_event",
+    "userId": 1,
+    "details": "Viewed event brewery-1",
+    "timestamp": "2025-10-27T01:28:25.854Z"
+  },
+  {
+    "id": "1761528506345",
+    "action": "view_event",
+    "userId": 1,
+    "details": "Viewed event brewery-1",
+    "timestamp": "2025-10-27T01:28:26.345Z"
+  },
+  {
+    "id": "1761528534229",
+    "action": "calculate_event_pricing",
+    "userId": 1,
+    "details": "Calculated pricing for event brewery-1",
+    "timestamp": "2025-10-27T01:28:54.229Z"
+  },
+  {
+    "id": "1761528534548",
+    "action": "calculate_event_pricing",
+    "userId": 1,
+    "details": "Calculated pricing for event brewery-1",
+    "timestamp": "2025-10-27T01:28:54.548Z"
+  },
+  {
+    "id": "1761528539320",
+    "action": "calculate_event_pricing",
+    "userId": 1,
+    "details": "Calculated pricing for event brewery-1",
+    "timestamp": "2025-10-27T01:28:59.320Z"
+  },
+  {
+    "id": "1761528541330",
+    "action": "calculate_event_pricing",
+    "userId": 1,
+    "details": "Calculated pricing for event brewery-1",
+    "timestamp": "2025-10-27T01:29:01.330Z"
+  },
+  {
+    "id": "1761528568003",
+    "action": "update_event_phase",
+    "userId": 1,
+    "details": "Updated phase 0 for event brewery-1",
+    "timestamp": "2025-10-27T01:29:28.003Z"
+  },
+  {
+    "id": "1761528568354",
+    "action": "view_event",
+    "userId": 1,
+    "details": "Viewed event brewery-1",
+    "timestamp": "2025-10-27T01:29:28.354Z"
+  },
+  {
+    "id": "1761529455076",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:44:15.076Z"
+  },
+  {
+    "id": "1761529456590",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:44:16.590Z"
+  },
+  {
+    "id": "1761529469734",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:44:29.734Z"
+  },
+  {
+    "id": "1761529469946",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:44:29.946Z"
+  },
+  {
+    "id": "1761529483613",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:44:43.613Z"
+  },
+  {
+    "id": "1761529483978",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:44:43.978Z"
+  },
+  {
+    "id": "1761529518622",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:45:18.622Z"
+  },
+  {
+    "id": "1761529518880",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:45:18.880Z"
+  },
+  {
+    "id": "1761529552054",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:45:52.054Z"
+  },
+  {
+    "id": "1761529552374",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:45:52.374Z"
+  },
+  {
+    "id": "1761529557436",
+    "action": "view_event",
+    "userId": 1,
+    "details": "Viewed event brewery-1",
+    "timestamp": "2025-10-27T01:45:57.436Z"
+  },
+  {
+    "id": "1761529557666",
+    "action": "view_event",
+    "userId": 1,
+    "details": "Viewed event brewery-1",
+    "timestamp": "2025-10-27T01:45:57.666Z"
+  },
+  {
+    "id": "1761530348686",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:59:08.686Z"
+  },
+  {
+    "id": "1761530349388",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:59:09.388Z"
+  },
+  {
+    "id": "1761530353169",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:59:13.169Z"
+  },
+  {
+    "id": "1761530353256",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:59:13.256Z"
+  },
+  {
+    "id": "1761530354556",
+    "action": "view_event",
+    "userId": 1,
+    "details": "Viewed event brewery-1",
+    "timestamp": "2025-10-27T01:59:14.556Z"
+  },
+  {
+    "id": "1761530354623",
+    "action": "view_event",
+    "userId": 1,
+    "details": "Viewed event brewery-1",
+    "timestamp": "2025-10-27T01:59:14.623Z"
+  },
+  {
+    "id": "1761530379984",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:59:39.984Z"
+  },
+  {
+    "id": "1761530380123",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T01:59:40.123Z"
+  },
+  {
+    "id": "1761530400970",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:00:00.970Z"
+  },
+  {
+    "id": "1761530401224",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:00:01.224Z"
+  },
+  {
+    "id": "1761530438138",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:00:38.138Z"
+  },
+  {
+    "id": "1761530438167",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:00:38.167Z"
+  },
+  {
+    "id": "1761530465206",
+    "action": "view_event",
+    "userId": 1,
+    "details": "Viewed event brewery-1",
+    "timestamp": "2025-10-27T02:01:05.206Z"
+  },
+  {
+    "id": "1761530465244",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:01:05.244Z"
+  },
+  {
+    "id": "1761530465294",
+    "action": "view_event",
+    "userId": 1,
+    "details": "Viewed event brewery-1",
+    "timestamp": "2025-10-27T02:01:05.294Z"
+  },
+  {
+    "id": "1761530465310",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:01:05.310Z"
+  },
+  {
+    "id": "1761530798005",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:06:38.005Z"
+  },
+  {
+    "id": "1761530798046",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:06:38.046Z"
+  },
+  {
+    "id": "1761530805043",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:06:45.043Z"
+  },
+  {
+    "id": "1761530805262",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:06:45.262Z"
+  },
+  {
+    "id": "1761530814231",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:06:54.231Z"
+  },
+  {
+    "id": "1761530814433",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:06:54.433Z"
+  },
+  {
+    "id": "1761530858117",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:07:38.117Z"
+  },
+  {
+    "id": "1761530858208",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:07:38.208Z"
+  },
+  {
+    "id": "1761530877003",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:07:57.003Z"
+  },
+  {
+    "id": "1761530877038",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:07:57.038Z"
+  },
+  {
+    "id": "1761531005399",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:10:05.399Z"
+  },
+  {
+    "id": "1761531005476",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:10:05.476Z"
+  },
+  {
+    "id": "1761531024331",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:10:24.331Z"
+  },
+  {
+    "id": "1761531143937",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:12:23.937Z"
+  },
+  {
+    "id": "1761531144045",
+    "action": "view_stats",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:12:24.045Z"
+  },
+  {
+    "id": "1761531151827",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:12:31.827Z"
+  },
+  {
+    "id": "1761531151855",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:12:31.855Z"
+  },
+  {
+    "id": "1761531151944",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:12:31.944Z"
+  },
+  {
+    "id": "1761531151959",
+    "action": "view_enquiries",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:12:31.959Z"
+  },
+  {
+    "id": "1761531171113",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:12:51.113Z"
+  },
+  {
+    "id": "1761531171147",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:12:51.147Z"
+  },
+  {
+    "id": "1761531171210",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:12:51.210Z"
+  },
+  {
+    "id": "1761531171226",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:12:51.226Z"
+  },
+  {
+    "id": "1761531485401",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:18:05.401Z"
+  },
+  {
+    "id": "1761531485418",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:18:05.418Z"
+  },
+  {
+    "id": "1761531485462",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:18:05.462Z"
+  },
+  {
+    "id": "1761531485472",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:18:05.472Z"
+  },
+  {
+    "id": "1761531754153",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:22:34.153Z"
+  },
+  {
+    "id": "1761531754175",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:22:34.175Z"
+  },
+  {
+    "id": "1761531754264",
+    "action": "view_services",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:22:34.264Z"
+  },
+  {
+    "id": "1761531754278",
+    "action": "view_events",
+    "userId": 1,
+    "timestamp": "2025-10-27T02:22:34.278Z"
+  },
+  {
+    "id": "1761531924627",
+    "action": "logout",
+    "userId": 1,
+    "details": "User logged out",
+    "timestamp": "2025-10-27T02:25:24.627Z"
   }
 ]

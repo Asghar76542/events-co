@@ -64,6 +64,7 @@ import {
   ListChecks
 } from 'lucide-react'
 import Image from 'next/image'
+import UnifiedEventModal from '@/components/unified-event-modal'
 
 interface Event {
   id: string
@@ -133,44 +134,27 @@ const ONBOARDING_STATUSES = {
   completed: 'Completed'
 } as const
 
+interface Service {
+  id: string
+  name: string
+  category: string
+  description: string
+  baseCost: number
+  unit: string
+}
+
 export default function AdminEvents() {
   const router = useRouter()
   const [events, setEvents] = useState<Event[]>([])
+  const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isUnifiedModalOpen, setIsUnifiedModalOpen] = useState(false)
   const { toast } = useToast()
-  const [newEvent, setNewEvent] = useState<Omit<Event, 'id'>>({
-    title: '',
-    venue: '',
-    city: '',
-    category: 'weddings',
-    image: '',
-    description: '',
-    onboardingStatus: 'inquiry',
-  })
 
-  const resetNewEvent = () =>
-    setNewEvent({
-      title: '',
-      venue: '',
-      city: '',
-      category: 'weddings',
-      image: '',
-      description: '',
-      onboardingStatus: 'inquiry',
-    })
-
-  const handleAddDialogChange = (open: boolean) => {
-    setIsAddDialogOpen(open)
-    if (!open) {
-      resetNewEvent()
-    }
-  }
 
   const makeEventId = (title: string) =>
     `${title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'event'}-${Date.now()}`
@@ -194,28 +178,20 @@ export default function AdminEvents() {
     }
   }
 
-
-  const handleEdit = async (event: Event) => {
+  const fetchServices = async () => {
     try {
-      const response = await fetch('/api/admin/events', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(event),
-      })
-
+      const response = await fetch('/api/admin/services')
       if (!response.ok) {
-        throw new Error('Failed to update event')
+        throw new Error('Failed to fetch services')
       }
-
-      await fetchEvents()
-      setIsEditDialogOpen(false)
-      setEditingEvent(null)
+      const data = await response.json()
+      setServices(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update event')
+      console.error('Failed to fetch services:', err)
     }
   }
+
+
 
   const handleDelete = async (id: string) => {
     try {
@@ -237,53 +213,44 @@ export default function AdminEvents() {
     }
   }
 
-  const handleAdd = async () => {
+  const handleCreateEvent = async (eventData: any) => {
     try {
-      if (!newEvent.title || !newEvent.venue || !newEvent.city) {
-        toast({
-          title: 'Missing information',
-          description: 'Title, venue, and city are required to create an event.',
-          variant: 'destructive',
-        })
-        return
-      }
-
-      const payload = {
-        ...newEvent,
-        id: makeEventId(newEvent.title),
-      }
+      const isEditing = editingEvent !== null
+      const method = isEditing ? 'PUT' : 'POST'
+      const body = isEditing ? { ...eventData, id: editingEvent.id } : eventData
 
       const response = await fetch('/api/admin/events', {
-        method: 'POST',
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(body),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create event')
+        throw new Error(`Failed to ${isEditing ? 'update' : 'create'} event`)
       }
 
       await fetchEvents()
-      setIsAddDialogOpen(false)
-      resetNewEvent()
+      setIsUnifiedModalOpen(false)
+      setEditingEvent(null)
       toast({
-        title: 'Event created',
-        description: `"${newEvent.title}" has been added to your portfolio.`,
+        title: `Event ${isEditing ? 'updated' : 'created'}`,
+        description: `"${eventData.title}" has been ${isEditing ? 'updated' : 'added to your portfolio'}.`,
       })
     } catch (err) {
       toast({
         title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to create event',
+        description: err instanceof Error ? err.message : `Failed to ${editingEvent ? 'update' : 'create'} event`,
         variant: 'destructive',
       })
-      setError(err instanceof Error ? err.message : 'Failed to create event')
+      setError(err instanceof Error ? err.message : `Failed to ${editingEvent ? 'update' : 'create'} event`)
     }
   }
 
   useEffect(() => {
     fetchEvents()
+    fetchServices()
   }, [])
 
   const filteredEvents = events.filter(event => {
@@ -328,7 +295,10 @@ export default function AdminEvents() {
             <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
-          <Button onClick={() => setIsAddDialogOpen(true)} size="sm">
+          <Button onClick={() => {
+            setEditingEvent(null)
+            setIsUnifiedModalOpen(true)
+          }} size="sm">
             <Plus className="mr-2 h-4 w-4" />
             Add Event
           </Button>
@@ -427,29 +397,17 @@ export default function AdminEvents() {
                   </p>
                   <div className="flex gap-2">
                     <Button
-                      variant="outline"
+                      variant="default"
                       size="sm"
                       className="flex-1"
                       onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                         e.stopPropagation()
                         setEditingEvent(event)
-                        setIsEditDialogOpen(true)
+                        setIsUnifiedModalOpen(true)
                       }}
                     >
-                      <Edit className="mr-1 h-3 w-3" />
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                        e.stopPropagation()
-                        router.push(`/admin/events/${event.id}`)
-                      }}
-                    >
-                      <Eye className="mr-1 h-3 w-3" />
-                      View
+                      <Package className="mr-1 h-3 w-3" />
+                      Manage Event
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
@@ -688,195 +646,18 @@ export default function AdminEvents() {
         </TabsContent>
       </Tabs>
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Edit Event</DialogTitle>
-            <DialogDescription>
-              Make changes to the event details below.
-            </DialogDescription>
-          </DialogHeader>
-          {editingEvent && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="title" className="text-right">
-                  Title
-                </Label>
-                <Input
-                  id="title"
-                  value={editingEvent.title}
-                  onChange={(e) => setEditingEvent({...editingEvent, title: e.target.value})}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="venue" className="text-right">
-                  Venue
-                </Label>
-                <Input
-                  id="venue"
-                  value={editingEvent.venue}
-                  onChange={(e) => setEditingEvent({...editingEvent, venue: e.target.value})}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="city" className="text-right">
-                  City
-                </Label>
-                <Input
-                  id="city"
-                  value={editingEvent.city}
-                  onChange={(e) => setEditingEvent({...editingEvent, city: e.target.value})}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="category" className="text-right">
-                  Category
-                </Label>
-                <Select
-                  value={editingEvent.category}
-                  onValueChange={(value: Event['category']) => setEditingEvent({...editingEvent, category: value})}
-                >
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="weddings">Weddings</SelectItem>
-                    <SelectItem value="corporate">Corporate</SelectItem>
-                    <SelectItem value="decor">Decor</SelectItem>
-                    <SelectItem value="all">All</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="image" className="text-right">
-                  Image URL
-                </Label>
-                <Input
-                  id="image"
-                  value={editingEvent.image}
-                  onChange={(e) => setEditingEvent({...editingEvent, image: e.target.value})}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-start gap-4">
-                <Label htmlFor="description" className="text-right pt-2">
-                  Description
-                </Label>
-                <Textarea
-                  id="description"
-                  value={editingEvent.description}
-                  onChange={(e) => setEditingEvent({...editingEvent, description: e.target.value})}
-                  className="col-span-3"
-                  rows={3}
-                />
-              </div>
-            </div>
-          )}
-          <DialogFooter>
-            <Button type="submit" onClick={() => editingEvent && handleEdit(editingEvent)}>
-              Save changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
-      {/* Add Dialog */}
-      <Dialog open={isAddDialogOpen} onOpenChange={handleAddDialogChange}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Add New Event</DialogTitle>
-            <DialogDescription>
-              Create a new event for your portfolio.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="new-title" className="text-right">
-                Title
-              </Label>
-              <Input
-                id="new-title"
-                className="col-span-3"
-                value={newEvent.title}
-                onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="new-venue" className="text-right">
-                Venue
-              </Label>
-              <Input
-                id="new-venue"
-                className="col-span-3"
-                value={newEvent.venue}
-                onChange={(e) => setNewEvent({ ...newEvent, venue: e.target.value })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="new-city" className="text-right">
-                City
-              </Label>
-              <Input
-                id="new-city"
-                className="col-span-3"
-                value={newEvent.city}
-                onChange={(e) => setNewEvent({ ...newEvent, city: e.target.value })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="new-category" className="text-right">
-                Category
-              </Label>
-              <Select
-                value={newEvent.category}
-                onValueChange={(value: Event['category']) => setNewEvent({ ...newEvent, category: value })}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="weddings">Weddings</SelectItem>
-                  <SelectItem value="corporate">Corporate</SelectItem>
-                  <SelectItem value="decor">Decor</SelectItem>
-                  <SelectItem value="all">All</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="new-image" className="text-right">
-                Image URL
-              </Label>
-              <Input
-                id="new-image"
-                className="col-span-3"
-                value={newEvent.image}
-                onChange={(e) => setNewEvent({ ...newEvent, image: e.target.value })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-start gap-4">
-              <Label htmlFor="new-description" className="text-right pt-2">
-                Description
-              </Label>
-              <Textarea
-                id="new-description"
-                className="col-span-3"
-                rows={3}
-                value={newEvent.description}
-                onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" onClick={handleAdd}>
-              Add Event
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Unified Event Modal */}
+      <UnifiedEventModal
+        isOpen={isUnifiedModalOpen}
+        onClose={() => {
+          setIsUnifiedModalOpen(false)
+          setEditingEvent(null)
+        }}
+        onSave={handleCreateEvent}
+        existingEvent={editingEvent as any}
+        services={services}
+      />
     </div>
   )
 }

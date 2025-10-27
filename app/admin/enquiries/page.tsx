@@ -52,8 +52,14 @@ import {
   Calendar,
   RefreshCw,
   Search,
-  ArrowRight
+  ArrowRight,
+  Eye,
+  User,
+  MapPin,
+  FileText,
+  DollarSign
 } from 'lucide-react'
+import UnifiedEventModal from '@/components/unified-event-modal'
 
 interface Enquiry {
   id: string
@@ -66,8 +72,36 @@ interface Enquiry {
   timestamp: string
 }
 
+interface Service {
+  id: string
+  name: string
+  category: string
+  description: string
+  baseCost: number
+  unit: string
+}
+
+interface EventConversionData {
+  title: string
+  category: 'weddings' | 'corporate' | 'decor' | 'all'
+  packageType: 'Essentials' | 'Complete' | 'Luxury'
+  eventDate: string
+  venue: string
+  description: string
+  services: Array<{
+    id: string
+    name: string
+    type: string
+    description: string
+    supplierCost: number
+    quantity: number
+    totalCost: number
+  }>
+}
+
 export default function AdminEnquiries() {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([])
+  const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -75,6 +109,11 @@ export default function AdminEnquiries() {
   const [editingEnquiry, setEditingEnquiry] = useState<Enquiry | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
+  const [isConvertDialogOpen, setIsConvertDialogOpen] = useState(false)
+  const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null)
+  const [convertingEnquiry, setConvertingEnquiry] = useState<Enquiry | null>(null)
+  const [isUnifiedModalOpen, setIsUnifiedModalOpen] = useState(false)
   const [newEnquiry, setNewEnquiry] = useState<Omit<Enquiry, 'id' | 'timestamp'>>({
     name: '',
     email: '',
@@ -82,6 +121,15 @@ export default function AdminEnquiries() {
     eventDate: '',
     eventType: 'weddings',
     message: '',
+  })
+  const [conversionData, setConversionData] = useState<EventConversionData>({
+    title: '',
+    category: 'weddings',
+    packageType: 'Essentials',
+    eventDate: '',
+    venue: '',
+    description: '',
+    services: []
   })
   const { toast } = useToast()
 
@@ -127,6 +175,19 @@ export default function AdminEnquiries() {
       handleFetchError(err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchServices = async () => {
+    try {
+      const response = await fetch('/api/admin/services')
+      if (!response.ok) {
+        throw new Error('Failed to fetch services')
+      }
+      const data = await response.json()
+      setServices(data)
+    } catch (err) {
+      console.error('Failed to fetch services:', err)
     }
   }
 
@@ -227,30 +288,103 @@ export default function AdminEnquiries() {
     }
   }
 
-  const handleConvertToEvent = async (enquiry: Enquiry) => {
-    try {
-      const eventData = {
-        title: `${enquiry.name}'s ${enquiry.eventType}`,
-        venue: 'To be determined', // Can be set later
-        city: '', // Can be set later
-        category: enquiry.eventType as 'weddings' | 'corporate' | 'decor' | 'all',
-        image: '', // Can be set later
-        description: enquiry.message,
-        onboardingStatus: 'inquiry',
-        clientInfo: {
-          name: enquiry.name,
-          email: enquiry.email,
-          phone: enquiry.phone,
-          contactMethod: 'Email' as const,
-        },
-        timeline: {
-          eventDate: enquiry.eventDate,
-          depositDue: '', // Calculate based on eventDate
-          midPaymentDue: '',
-          finalPaymentDue: '',
-        },
-      }
+  const handleDetailView = (enquiry: Enquiry) => {
+    setSelectedEnquiry(enquiry)
+    setIsDetailDialogOpen(true)
+  }
 
+  const handleConvertToEventClick = (enquiry: Enquiry) => {
+    setConvertingEnquiry(enquiry)
+    setIsUnifiedModalOpen(true)
+  }
+
+  const getDefaultServicesForPackage = (packageType: string, category: string): Service[] => {
+    // Base services for different package types
+    const packageServices: Record<string, string[]> = {
+      'Essentials': ['venue-coordination', 'day-coordination'],
+      'Complete': ['full-planning', 'modern-british-menu', 'decor-floral'],
+      'Luxury': ['full-planning', 'modern-british-menu', 'decor-floral', 'av-lighting', 'photography']
+    }
+
+    const serviceIds = packageServices[packageType] || []
+    return services.filter(service => serviceIds.includes(service.id))
+  }
+
+  const calculatePricing = (packageType: string, selectedServices: typeof conversionData.services) => {
+    const packagePrices: Record<string, number> = {
+      'Essentials': 5000,
+      'Complete': 8500,
+      'Luxury': 12000
+    }
+
+    const baseCost = packagePrices[packageType] || 0
+    const servicesCost = selectedServices.reduce((total, service) => total + service.totalCost, 0)
+    const subtotal = baseCost + servicesCost
+    const markup = subtotal * 0.32 // 32% markup
+    const total = subtotal + markup
+
+    return {
+      baseCost,
+      servicesCost,
+      subtotal,
+      markup,
+      total,
+      depositAmount: total * 0.3,
+      midPayment: total * 0.5,
+      finalPayment: total * 0.2
+    }
+  }
+
+  const handlePackageTypeChange = (packageType: string) => {
+    const category = conversionData.category
+    const defaultServices = getDefaultServicesForPackage(packageType, category)
+
+    const servicesWithDetails = defaultServices.map(service => ({
+      id: service.id,
+      name: service.name,
+      type: service.category,
+      description: service.description,
+      supplierCost: service.baseCost,
+      quantity: 1,
+      totalCost: service.baseCost
+    }))
+
+    setConversionData(prev => ({
+      ...prev,
+      packageType: packageType as 'Essentials' | 'Complete' | 'Luxury',
+      services: servicesWithDetails
+    }))
+  }
+
+  const handleAddCustomService = (serviceId: string) => {
+    const service = services.find(s => s.id === serviceId)
+    if (!service) return
+
+    const newService = {
+      id: service.id,
+      name: service.name,
+      type: service.category,
+      description: service.description,
+      supplierCost: service.baseCost,
+      quantity: 1,
+      totalCost: service.baseCost
+    }
+
+    setConversionData(prev => ({
+      ...prev,
+      services: [...prev.services, newService]
+    }))
+  }
+
+  const handleRemoveService = (serviceId: string) => {
+    setConversionData(prev => ({
+      ...prev,
+      services: prev.services.filter(s => s.id !== serviceId)
+    }))
+  }
+
+  const handleCreateEventFromEnquiry = async (eventData: any) => {
+    try {
       const response = await fetch('/api/admin/events', {
         method: 'POST',
         headers: {
@@ -263,10 +397,12 @@ export default function AdminEnquiries() {
         throw new Error('Failed to create event from enquiry')
       }
 
-      await fetchEnquiries() // Optionally update enquiries list
+      await fetchEnquiries()
+      setIsUnifiedModalOpen(false)
+      setConvertingEnquiry(null)
       toast({
         title: 'Success',
-        description: `Event created from enquiry for ${enquiry.name}`,
+        description: `Event created from enquiry for ${convertingEnquiry?.name}`,
       })
     } catch (err) {
       toast({
@@ -279,6 +415,7 @@ export default function AdminEnquiries() {
 
   useEffect(() => {
     fetchEnquiries()
+    fetchServices()
   }, [])
 
   const filteredEnquiries = enquiries.filter(enquiry =>
@@ -374,9 +511,9 @@ export default function AdminEnquiries() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Customer</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Event Details</TableHead>
+                <TableHead>Client Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Event Type</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Message</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -386,37 +523,31 @@ export default function AdminEnquiries() {
               {filteredEnquiries.map((enquiry) => (
                 <TableRow key={enquiry.id}>
                   <TableCell>
-                    <div className="font-medium">{enquiry.name}</div>
+                    <Button
+                      variant="link"
+                      className="p-0 h-auto font-medium text-left justify-start"
+                      onClick={() => handleDetailView(enquiry)}
+                    >
+                      {enquiry.name}
+                    </Button>
                   </TableCell>
                   <TableCell>
-                    <div className="space-y-1">
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Mail className="mr-1 h-3 w-3" />
-                        {enquiry.email}
-                      </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Phone className="mr-1 h-3 w-3" />
-                        {enquiry.phone}
-                      </div>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Mail className="mr-1 h-3 w-3" />
+                      {enquiry.email}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="space-y-1">
-                      <Badge variant="outline">{enquiry.eventType}</Badge>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Calendar className="mr-1 h-3 w-3" />
-                        {new Date(enquiry.eventDate).toLocaleDateString()}
-                      </div>
-                    </div>
+                    <Badge variant="outline">{enquiry.eventType}</Badge>
                   </TableCell>
                   <TableCell>
                     <div className="text-sm text-muted-foreground">
-                      {formatDate(enquiry.timestamp)}
+                      {enquiry.eventDate ? new Date(enquiry.eventDate).toLocaleDateString() : 'Not set'}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="max-w-xs truncate text-sm" title={enquiry.message}>
-                      {enquiry.message}
+                      {enquiry.message.length > 50 ? `${enquiry.message.substring(0, 50)}...` : enquiry.message}
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
@@ -424,7 +555,7 @@ export default function AdminEnquiries() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleConvertToEvent(enquiry)}
+                        onClick={() => handleConvertToEventClick(enquiry)}
                       >
                         <ArrowRight className="h-4 w-4" />
                         Convert to Event
@@ -468,6 +599,85 @@ export default function AdminEnquiries() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Detail Dialog */}
+      <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Enquiry Details</DialogTitle>
+            <DialogDescription>
+              Complete information about this enquiry
+            </DialogDescription>
+          </DialogHeader>
+          {selectedEnquiry && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm font-medium">
+                    <User className="mr-2 h-4 w-4" />
+                    Client Information
+                  </div>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <p><strong>Name:</strong> {selectedEnquiry.name}</p>
+                    <p><strong>Email:</strong> {selectedEnquiry.email}</p>
+                    <p><strong>Phone:</strong> {selectedEnquiry.phone}</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm font-medium">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Event Information
+                  </div>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <p><strong>Event Type:</strong> {selectedEnquiry.eventType}</p>
+                    <p><strong>Event Date:</strong> {selectedEnquiry.eventDate ? new Date(selectedEnquiry.eventDate).toLocaleDateString() : 'Not specified'}</p>
+                    <p><strong>Submitted:</strong> {formatDate(selectedEnquiry.timestamp)}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center text-sm font-medium">
+                  <FileText className="mr-2 h-4 w-4" />
+                  Message
+                </div>
+                <div className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
+                  {selectedEnquiry.message}
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button onClick={() => setIsDetailDialogOpen(false)}>
+              Close
+            </Button>
+            {selectedEnquiry && (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsDetailDialogOpen(false)
+                    setEditingEnquiry(selectedEnquiry)
+                    setIsEditDialogOpen(true)
+                  }}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsDetailDialogOpen(false)
+                    handleConvertToEventClick(selectedEnquiry)
+                  }}
+                >
+                  <ArrowRight className="mr-2 h-4 w-4" />
+                  Convert to Event
+                </Button>
+              </>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
@@ -554,6 +764,18 @@ export default function AdminEnquiries() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Unified Event Modal */}
+      <UnifiedEventModal
+        isOpen={isUnifiedModalOpen}
+        onClose={() => {
+          setIsUnifiedModalOpen(false)
+          setConvertingEnquiry(null)
+        }}
+        onSave={handleCreateEventFromEnquiry}
+        enquiry={convertingEnquiry}
+        services={services}
+      />
 
       {/* Add Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={handleAddDialogChange}>

@@ -72,7 +72,7 @@ function calculatePricing(request: PricingRequest) {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const auth = requireAuth(request);
   if ('error' in auth) {
@@ -85,8 +85,9 @@ export async function POST(
     return NextResponse.json({ error: 'Services and package type are required' }, { status: 400 });
   }
 
+  const { id: eventId } = await params;
   const pricing = calculatePricing(body);
-  logAction('calculate_event_pricing', auth.userId, `Calculated pricing for event ${params.id}`);
+  logAction('calculate_event_pricing', auth.userId, `Calculated pricing for event ${eventId}`);
 
   return NextResponse.json(pricing);
 }

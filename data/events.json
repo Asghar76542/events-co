@@ -61,33 +61,51 @@
     "phases": [
       {
         "name": "Booking Secured",
-        "status": "completed",
-        "checklist": ["Contract signed", "Deposit received"]
+        "status": "pending",
+        "checklist": [
+          "Contract signed",
+          "Deposit received"
+        ]
       },
       {
         "name": "Planning & Supplier Management",
         "status": "in_progress",
-        "checklist": ["Venue confirmed", "Supplier quotes approved"]
+        "checklist": [
+          "Venue confirmed",
+          "Supplier quotes approved"
+        ]
       },
       {
         "name": "Finalization",
         "status": "pending",
-        "checklist": ["Menu approved", "Decor finalized"]
+        "checklist": [
+          "Menu approved",
+          "Decor finalized"
+        ]
       },
       {
         "name": "Final Push",
         "status": "pending",
-        "checklist": ["Final payment received", "Run sheet created"]
+        "checklist": [
+          "Final payment received",
+          "Run sheet created"
+        ]
       },
       {
         "name": "Event Execution",
         "status": "pending",
-        "checklist": ["Event day management", "Quality checks"]
+        "checklist": [
+          "Event day management",
+          "Quality checks"
+        ]
       },
       {
         "name": "Post-Event",
         "status": "pending",
-        "checklist": ["Thank you sent", "Feedback requested"]
+        "checklist": [
+          "Thank you sent",
+          "Feedback requested"
+        ]
       }
     ]
   },
@@ -154,32 +172,50 @@
       {
         "name": "Booking Secured",
         "status": "completed",
-        "checklist": ["Contract signed", "Deposit received"]
+        "checklist": [
+          "Contract signed",
+          "Deposit received"
+        ]
       },
       {
         "name": "Planning & Supplier Management",
         "status": "completed",
-        "checklist": ["Venue confirmed", "Supplier quotes approved"]
+        "checklist": [
+          "Venue confirmed",
+          "Supplier quotes approved"
+        ]
       },
       {
         "name": "Finalization",
         "status": "in_progress",
-        "checklist": ["Menu approved", "Decor finalized"]
+        "checklist": [
+          "Menu approved",
+          "Decor finalized"
+        ]
       },
       {
         "name": "Final Push",
         "status": "pending",
-        "checklist": ["Final payment received", "Run sheet created"]
+        "checklist": [
+          "Final payment received",
+          "Run sheet created"
+        ]
       },
       {
         "name": "Event Execution",
         "status": "pending",
-        "checklist": ["Event day management", "Quality checks"]
+        "checklist": [
+          "Event day management",
+          "Quality checks"
+        ]
       },
       {
         "name": "Post-Event",
         "status": "pending",
-        "checklist": ["Thank you sent", "Feedback requested"]
+        "checklist": [
+          "Thank you sent",
+          "Feedback requested"
+        ]
       }
     ]
   }

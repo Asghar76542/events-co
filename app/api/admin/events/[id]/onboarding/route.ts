@@ -72,14 +72,14 @@ function saveEvents(events: Event[]) {
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const auth = requireAuth(request);
   if ('error' in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const eventId = params.id;
+  const { id: eventId } = await params;
   const updateData: OnboardingUpdate = await request.json();
 
   const events: Event[] = getEvents();
@@ -108,14 +108,14 @@ export async function PUT(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const auth = requireAuth(request);
   if ('error' in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const eventId = params.id;
+  const { id: eventId } = await params;
   const updateData: { phaseIndex?: number; status?: "pending" | "completed" } = await request.json();
 
   const events: Event[] = getEvents();

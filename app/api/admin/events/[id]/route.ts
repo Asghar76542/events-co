@@ -63,14 +63,14 @@ function saveEvents(events: Event[]) {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const auth = requireAuth(request);
   if ('error' in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const eventId = params.id;
+  const { id: eventId } = await params;
   const events: Event[] = getEvents();
   const event = events.find((e: Event) => e.id === eventId);
 
@@ -84,14 +84,14 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const auth = requireAuth(request);
   if ('error' in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const eventId = params.id;
+  const { id: eventId } = await params;
   const updateData = await request.json();
 
   const events: Event[] = getEvents();
@@ -111,14 +111,14 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const auth = requireAuth(request);
   if ('error' in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const eventId = params.id;
+  const { id: eventId } = await params;
   const events: Event[] = getEvents();
   const newEvents = events.filter((e: Event) => e.id !== eventId);
 

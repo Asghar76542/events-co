@@ -2,13 +2,14 @@
 
 import type React from "react"
 
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Mail, Phone, MapPin } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
@@ -29,6 +30,7 @@ export function Contact() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<FormData>({
@@ -189,20 +191,27 @@ export function Contact() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="eventType" className="text-sm font-medium text-foreground">
+                  <label className="text-sm font-medium text-foreground">
                     Event Type *
                   </label>
-                  <select
-                    id="eventType"
-                    {...register("eventType")}
-                    className="w-full h-10 px-3 rounded-md border border-input bg-background text-foreground"
-                  >
-                    <option value="">Select event type</option>
-                    <option value="wedding">Wedding</option>
-                    <option value="corporate">Corporate Event</option>
-                    <option value="private">Private Celebration</option>
-                    <option value="other">Other</option>
-                  </select>
+                  <Controller
+                    name="eventType"
+                    control={control}
+                    rules={{ required: "Event type is required" }}
+                    render={({ field }) => (
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select event type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="wedding">Wedding</SelectItem>
+                          <SelectItem value="corporate">Corporate Event</SelectItem>
+                          <SelectItem value="private">Private Celebration</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
                   {errors.eventType && (
                     <p className="text-sm text-red-500">{errors.eventType.message}</p>
                   )}
