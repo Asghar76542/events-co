@@ -7,6 +7,7 @@
         "name": "Full Planning & Coordination",
         "description": "Comprehensive end-to-end event planning, design, and management.",
         "baseCost": 4500,
+        "rrp": 6075,
         "unit": "event"
       },
       {
@@ -14,6 +15,7 @@
         "name": "Partial Planning",
         "description": "Assistance with specific elements of your event, such as supplier sourcing or design.",
         "baseCost": 2500,
+        "rrp": 3375,
         "unit": "event"
       },
       {
@@ -21,6 +23,7 @@
         "name": "Day-of Coordination",
         "description": "On-the-day management to ensure your event runs smoothly.",
         "baseCost": 1200,
+        "rrp": 1620,
         "unit": "event"
       }
     ]
@@ -33,6 +36,7 @@
         "name": "3-Course Meal (Standard)",
         "description": "A high-quality 3-course meal. Price is per person.",
         "baseCost": 55,
+        "rrp": 74.25,
         "unit": "per_person"
       },
       {
@@ -40,6 +44,7 @@
         "name": "3-Course Meal (Premium)",
         "description": "A premium 3-course meal with more luxurious ingredients. Price is per person.",
         "baseCost": 85,
+        "rrp": 114.75,
         "unit": "per_person"
       },
       {
@@ -47,6 +52,7 @@
         "name": "Buffet (Standard)",
         "description": "A standard buffet selection. Price is per person.",
         "baseCost": 30,
+        "rrp": 40.50,
         "unit": "per_person"
       },
       {
@@ -54,6 +60,7 @@
         "name": "Buffet (Premium)",
         "description": "A premium buffet with a wider selection of dishes. Price is per person.",
         "baseCost": 50,
+        "rrp": 67.50,
         "unit": "per_person"
       },
       {
@@ -61,6 +68,7 @@
         "name": "Evening Food",
         "description": "Lighter fare for the evening part of your event. Price is per person.",
         "baseCost": 25,
+        "rrp": 33.75,
         "unit": "per_person"
       }
     ]
@@ -73,6 +81,7 @@
         "name": "Dry Hire (Standard)",
         "description": "Standard venue-only hire.",
         "baseCost": 6000,
+        "rrp": 8100,
         "unit": "event"
       },
       {
@@ -80,6 +89,7 @@
         "name": "Dry Hire (Premium)",
         "description": "Premium venue-only hire, typically for more exclusive locations.",
         "baseCost": 9000,
+        "rrp": 12150,
         "unit": "event"
       }
     ]
@@ -92,6 +102,7 @@
         "name": "Photographer (Full Day)",
         "description": "A professional photographer for the full duration of the event.",
         "baseCost": 1600,
+        "rrp": 2160,
         "unit": "event"
       },
       {
@@ -99,6 +110,7 @@
         "name": "Videographer (Full Day)",
         "description": "A professional videographer for the full duration of the event.",
         "baseCost": 1500,
+        "rrp": 2025,
         "unit": "event"
       },
       {
@@ -106,6 +118,7 @@
         "name": "Photo & Video Bundle (Full Day)",
         "description": "A photographer and videographer for the full day, often at a discounted rate.",
         "baseCost": 2800,
+        "rrp": 3780,
         "unit": "event"
       }
     ]
@@ -118,6 +131,7 @@
         "name": "Floral Design (Standard)",
         "description": "Standard floral arrangements for the venue and bridal party.",
         "baseCost": 1500,
+        "rrp": 2025,
         "unit": "event"
       },
       {
@@ -125,6 +139,7 @@
         "name": "Floral Design (Luxury)",
         "description": "Luxury, elaborate floral arrangements and installations.",
         "baseCost": 3500,
+        "rrp": 4725,
         "unit": "event"
       },
       {
@@ -132,6 +147,7 @@
         "name": "Venue Styling & Decor",
         "description": "Comprehensive venue styling, including lighting, furniture, and props (excluding flowers).",
         "baseCost": 1800,
+        "rrp": 2430,
         "unit": "event"
       }
     ]
@@ -144,6 +160,7 @@
         "name": "DJ (4-hour set)",
         "description": "A professional DJ for a 4-hour set.",
         "baseCost": 900,
+        "rrp": 1215,
         "unit": "event"
       },
       {
@@ -151,6 +168,78 @@
         "name": "Live Band (4-piece)",
         "description": "A 4-piece live band for the evening entertainment.",
         "baseCost": 1700,
+        "rrp": 2295,
+        "unit": "event"
+      }
+    ]
+  },
+  {
+    "category": "AV & Lighting",
+    "services": [
+      {
+        "id": "av-pa-system",
+        "name": "PA & Sound System",
+        "description": "Basic PA and sound system for speeches and background music.",
+        "baseCost": 120,
+        "rrp": 162,
+        "unit": "event"
+      },
+      {
+        "id": "av-lighting-basic",
+        "name": "Event Lighting (Basic)",
+        "description": "Basic lighting package including uplighting.",
+        "baseCost": 150,
+        "rrp": 202.5,
+        "unit": "event"
+      },
+      {
+        "id": "av-technician",
+        "name": "AV Technician",
+        "description": "A dedicated technician for an 8-hour day.",
+        "baseCost": 400,
+        "rrp": 540,
+        "unit": "event"
+      }
+    ]
+  },
+  {
+    "category": "Transport",
+    "services": [
+      {
+        "id": "transport-luxury-car",
+        "name": "Luxury Car Hire",
+        "description": "Luxury vehicle (e.g., Rolls-Royce) for 3-4 hours.",
+        "baseCost": 700,
+        "rrp": 945,
+        "unit": "event"
+      },
+      {
+        "id": "transport-coach-50",
+        "name": "Coach Hire (50 seats)",
+        "description": "Coach hire for up to 50 guests, price varies by distance.",
+        "baseCost": 500,
+        "rrp": 675,
+        "unit": "event"
+      }
+    ]
+  },
+  {
+    "category": "Marquee Hire",
+    "services": [
+      {
+        "id": "marquee-structure-100",
+        "name": "Marquee Structure (100 guests)",
+        "description": "Marquee structure only for up to 100 guests.",
+        "baseCost": 2750,
+        "rrp": 3712.5,
+        "unit": "event"
+      },
+      {
+        "id": "marquee-package-100",
+        "name": "Marquee Full Package (100 guests)",
+        "description": "Includes marquee, furniture, lighting, toilets, etc.",
+        "baseCost": 12000,
+        "rrp": 16200,
         "unit": "event"
       }
     ]
@@ -163,6 +252,7 @@
         "name": "Custom Printed Invitations",
         "description": "Bespoke printed invitations. Price is per person/household.",
         "baseCost": 4,
+        "rrp": 5.40,
         "unit": "per_person"
       },
       {
@@ -170,6 +260,7 @@
         "name": "Digital Invitations & RSVP Website",
         "description": "A custom-designed digital invitation and RSVP website.",
         "baseCost": 120,
+        "rrp": 162,
         "unit": "event"
       },
       {
@@ -177,7 +268,24 @@
         "name": "Guest Favors",
         "description": "Small gifts for each guest. Price is per person.",
         "baseCost": 2.5,
+        "rrp": 3.38,
         "unit": "per_person"
+      },
+      {
+        "id": "stationery-booklets",
+        "name": "Event Booklets (A5, 8pp)",
+        "description": "Order of service or event timeline booklets. Price per booklet.",
+        "baseCost": 1,
+        "rrp": 1.35,
+        "unit": "per_person"
+      },
+      {
+        "id": "stationery-signage",
+        "name": "Event Signage (A1 Poster)",
+        "description": "Welcome signs, seating charts, etc. Price per sign.",
+        "baseCost": 15,
+        "rrp": 20.25,
+        "unit": "event"
       }
     ]
   }
