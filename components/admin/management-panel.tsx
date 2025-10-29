@@ -288,9 +288,17 @@ export function ManagementPanel({ item, onClose, onSave, services: serviceCatego
                                         />
                                         <label htmlFor={`service-${service.id}`} className="font-medium">{service.name}</label>
                                     </div>
-                                    <div className="text-muted-foreground">
-                                        £{service.rrp.toFixed(2)}
-                                        {service.unit === 'per_person' && ' / person'}
+                                    <div className="text-muted-foreground text-right">
+                                        {service.unit === 'per_person' ? (
+                                            <div>
+                                                <span>£{service.rrp.toFixed(2)} / person</span>
+                                                <span className="text-xs block">
+                                                    Total: £{(service.rrp * (editedItem.guestCount || 0)).toFixed(2)}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <span>£{service.rrp.toFixed(2)}</span>
+                                        )}
                                     </div>
                                 </div>
                             ))}
